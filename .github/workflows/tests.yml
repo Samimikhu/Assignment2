@@ -24,7 +24,7 @@ jobs:
         run: |
           REM Compile all .cpp files including tests.cpp
           REM Define RUN_TESTS so tests are included
-          cl /nologo /EHsc /std:c++17 /D RUN_TESTS main.cpp StockApp.cpp BuyTrade.cpp SellTrade.cpp TradeCost.cpp tests.cpp /Fe:tests.exe
+          cl /nologo /EHsc /std:c++17 /D RUN_TESTS main.cpp StockApp.cpp tests.cpp /Fe:tests.exe
 
       # Step 4: Run the tests executable
       - name: Run tests
