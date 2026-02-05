@@ -6,7 +6,7 @@ using namespace std;
 StockApp::StockApp() : numBuy(0), numSell(0) {}
 
 void StockApp::displayBanner() {
-    cout << "=== Welcome to Stock Tracker  ===\n";
+    cout << "=== Welcome to Stock Tracker ===\n";
 }
 
 void StockApp::addBuyTrade() {
