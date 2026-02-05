@@ -1,0 +1,33 @@
+name: C++ doctest (Windows)
+
+# Trigger workflow on push or pull request
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup MSVC compiler environment
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      # Step 3: Build the tests executable
+      - name: Build tests
+        shell: cmd
+        run: |
+          REM Compile all .cpp files including tests.cpp
+          REM Define RUN_TESTS so tests are included
+          cl /nologo /EHsc /std:c++17 /D RUN_TESTS main.cpp StockApp.cpp BuyTrade.cpp SellTrade.cpp TradeCost.cpp tests.cpp /Fe:tests.exe
+
+      # Step 4: Run the tests executable
+      - name: Run tests
+        shell: cmd
+        run: |
+          tests.exe
