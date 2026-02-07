@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="BaseTrade">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAARAAAAAAAAABAAAAAAAAAAAEBABCAAAEABAAEAE=</HashCode>
+      <FileName>BaseTrade.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BuyTrade">
+    <Position X="4.75" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAEQAAAAARAAAAEQAAAAAAAABAAAAAA=</HashCode>
+      <FileName>BuyTrade.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SellTrade">
+    <Position X="7.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAACAAAAAAARAAAAAQAgAAAAAAACAAAAI=</HashCode>
+      <FileName>SellTrade.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TradeCost">
+    <Position X="6.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAARAAAABAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>TradeCost.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StockApp">
+    <Position X="6.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAEAQAAAAAAAAAAAAAABBAwCAAAAAAAAAAAACAACAAE=</HashCode>
+      <FileName>StockApp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

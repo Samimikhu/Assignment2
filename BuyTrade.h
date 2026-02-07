@@ -1,29 +1,60 @@
 #pragma once
 #include "BaseTrade.h"
 #include "TradeCost.h"
+#include <iostream>
+#include <iomanip>
 using namespace std;
 
 class BuyTrade : public BaseTrade {
 private:
     double commission;
-    TradeCost cost;  // composition
+    TradeCost cost;  // Composition: BuyTrade "has a" TradeCost
+
 public:
-    BuyTrade() : BaseTrade(), commission(0.0), cost() {}
-    BuyTrade(const string& n, int s, RiskLevel r, double c, double price)
-        : BaseTrade(n, s, r), commission(c), cost(price) {
+    // Default constructor
+    BuyTrade() {
+        // Call base default constructor automatically
+        commission = 0.0;
+        // cost default constructor runs automatically
     }
 
-    void setCommission(double c) { commission = c; }
-    double getCommission() const { return commission; }
+    // Constructor with parameters
+    BuyTrade(const string& n, int s, RiskLevel r, double c, double price) {
+        // Initialize base class members manually
+        setName(n);
+        setShares(s);
+        setRisk(r);
 
-    void setPrice(double p) { cost.setPrice(p); }
-    double getPrice() const { return cost.getPrice(); }
+        commission = c;
+        cost.setPrice(price);
+    }
 
-    // Print function (redefines base behavior)
+    void setCommission(double c) {
+        commission = c;
+    }
+
+    double getCommission() const {
+        return commission;
+    }
+
+    // Setter for price (via composition)
+    void setPrice(double p) {
+        cost.setPrice(p);
+    }
+
+    // Getter for price (via composition)
+    double getPrice() const {
+        return cost.getPrice();
+    }
+
+    // Print function — adds BuyTrade info on top of BaseTrade info
     void print() const {
-        printBase();  // call base print manually
+        // Print base class info
+        printBase();
+
+        // Print BuyTrade-specific info
         cout << ", Commission: $" << fixed << setprecision(2) << commission
             << ", Total Cost: $" << fixed << setprecision(2)
-            << cost.totalValue(shares) + commission << endl;
+            << cost.totalValue(getShares()) + commission << endl;
     }
 };

@@ -7,35 +7,65 @@ using namespace std;
 class BaseTrade {
 protected:
     int shares; // Derived classes can access
+
 private:
     string name;
     RiskLevel risk;
+
 public:
     // Default constructor
-    BaseTrade() : name(""), shares(0), risk(Low) {}
+    BaseTrade() {
+        name = "";
+        shares = 0;
+        risk = Low;
+    }
 
-    // Parameterized constructor
-    BaseTrade(const string& n, int s, RiskLevel r) : name(n), shares(s), risk(r) {}
+    // Constructor with parameters
+    BaseTrade(const string& n, int s, RiskLevel r) {
+        name = n;
+        shares = s;
+        risk = r;
+    }
 
-    // Setters/Getters
-    void setName(const string& n) { name = n; }
-    string getName() const { return name; }
+    void setName(const string& n) {
+        name = n;
+    }
 
-    void setShares(int s) { shares = s; }
-    int getShares() const { return shares; }
+    string getName() const {
+        return name;
+    }
 
-    void setRisk(RiskLevel r) { risk = r; }
-    RiskLevel getRisk() const { return risk; }
+    void setShares(int s) {
+        shares = s;
+    }
 
-    // Print function 
+    int getShares() const {
+        return shares;
+    }
+
+    void setRisk(RiskLevel r) {
+        risk = r;
+    }
+
+    RiskLevel getRisk() const {
+        return risk;
+    }
+
+    // Print function for base info
     void printBase() const {
         cout << "Trade: " << name
             << ", Shares: " << shares
             << ", Risk: ";
         switch (risk) {
-        case Low: cout << "Low"; break;
-        case Medium: cout << "Medium"; break;
-        case High: cout << "High"; break;
+        case Low:
+            cout << "Low";
+            break;
+        case Medium:
+            cout << "Medium";
+            break;
+        case High:
+            cout << "High";
+            break;
         }
     }
 };

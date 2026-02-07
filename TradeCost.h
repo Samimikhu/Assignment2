@@ -6,13 +6,29 @@ using namespace std;
 class TradeCost {
 private:
     double pricePerShare;
+
 public:
-    TradeCost() : pricePerShare(0.0) {}
-    TradeCost(double p) : pricePerShare(p) {}
+    // Default constructor
+    TradeCost() {
+        pricePerShare = 0.0;
+    }
 
-    void setPrice(double p) { pricePerShare = p; }
-    double getPrice() const { return pricePerShare; }
+    // Parameterized constructor
+    TradeCost(double p) {
+        pricePerShare = p;
+    }
 
+    // Setter for pricePerShare
+    void setPrice(double p) {
+        pricePerShare = p;
+    }
+
+    // Getter for pricePerShare
+    double getPrice() const {
+        return pricePerShare;
+    }
+
+    // Calculate total value given number of shares
     double totalValue(int shares) const {
         return pricePerShare * shares;
     }

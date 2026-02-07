@@ -39,6 +39,9 @@
     <ClCompile Include="StockApp.cpp" />
     <ClCompile Include="Tests.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="StockAppClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
