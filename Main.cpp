@@ -2,14 +2,12 @@
 #include <iostream>
 using namespace std;
 
-// Prevent this main from running if we are doing unit tests
-#ifndef RUN_TESTS
+#ifndef RUN_TESTS   // Prevent conflict with unit test main
 
 int main() {
-    
-    StockApp app;
-    app.displayBanner();
-    app.showMenu();
+    StockApp app;          
+    app.displayBanner();   
+    app.showMenu();        
     return 0;
 }
 

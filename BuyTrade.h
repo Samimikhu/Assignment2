@@ -1,60 +1,46 @@
+/*
+Derived class from BaseTrade representing buy trades.
+
+Assignment 5 ADDITIONS:
+- Inherits from BaseTrade
+- Implements overridden print()
+- Uses TradeCost (composition)
+==========================================================
+*/
+
 #pragma once
 #include "BaseTrade.h"
 #include "TradeCost.h"
 #include <iostream>
-#include <iomanip>
 using namespace std;
 
 class BuyTrade : public BaseTrade {
 private:
     double commission;
-    TradeCost cost;  // Composition: BuyTrade "has a" TradeCost
+
+    //// ===== ASSIGNMENT 5 ADDITION =====
+    TradeCost cost;   // Composition
 
 public:
-    // Default constructor
-    BuyTrade() {
-        // Call base default constructor automatically
-        commission = 0.0;
-        // cost default constructor runs automatically
+    BuyTrade() : BaseTrade(), commission(0.0), cost(0.0) {}
+
+    BuyTrade(string n, int s, RiskLevel r, double c, double price)
+        : BaseTrade(n, s, r), commission(c), cost(price) {
     }
 
-    // Constructor with parameters
-    BuyTrade(const string& n, int s, RiskLevel r, double c, double price) {
-        // Initialize base class members manually
-        setName(n);
-        setShares(s);
-        setRisk(r);
+    void setCommission(double c) { commission = c; }
+    double getCommission() const { return commission; }
 
-        commission = c;
-        cost.setPrice(price);
-    }
+    void setPrice(double p) { cost.setPrice(p); }
+    double getPrice() const { return cost.getPrice(); }
 
-    void setCommission(double c) {
-        commission = c;
-    }
-
-    double getCommission() const {
-        return commission;
-    }
-
-    // Setter for price (via composition)
-    void setPrice(double p) {
-        cost.setPrice(p);
-    }
-
-    // Getter for price (via composition)
-    double getPrice() const {
-        return cost.getPrice();
-    }
-
-    // Print function — adds BuyTrade info on top of BaseTrade info
-    void print() const {
-        // Print base class info
-        printBase();
-
-        // Print BuyTrade-specific info
-        cout << ", Commission: $" << fixed << setprecision(2) << commission
-            << ", Total Cost: $" << fixed << setprecision(2)
-            << cost.totalValue(getShares()) + commission << endl;
+    //// ===== ASSIGNMENT 5 ADDITION =====
+    // Overridden virtual function
+    void print() const override {
+        cout << "[BUY] "
+            << name << " | Shares: " << shares
+            << " | Price: $" << cost.getPrice()
+            << " | Commission: $" << commission
+            << endl;
     }
 };

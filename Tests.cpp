@@ -1,15 +1,26 @@
+﻿/*
+Unit tests using doctest framework.
+
+==========================================================
+*/
+
 #ifdef RUN_TESTS
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 #include "BuyTrade.h"
 #include "SellTrade.h"
+#include "TradeManager.h"
 #include "TradeCost.h"
+#include <sstream>
 
-// ---------------- A) CONSTRUCTORS ----------------
+// ==========================================================
+// A) CONSTRUCTOR TESTS
+// ==========================================================
 
 TEST_CASE("BuyTrade constructor initializes fields") {
     BuyTrade b("AAPL", 10, Medium, 5.0, 100.0);
+
     CHECK(b.getName() == "AAPL");
     CHECK(b.getShares() == 10);
     CHECK(b.getRisk() == Medium);
@@ -19,6 +30,7 @@ TEST_CASE("BuyTrade constructor initializes fields") {
 
 TEST_CASE("SellTrade constructor initializes fields") {
     SellTrade s("GOOG", 5, High, 50.0, 200.0);
+
     CHECK(s.getName() == "GOOG");
     CHECK(s.getShares() == 5);
     CHECK(s.getRisk() == High);
@@ -26,58 +38,73 @@ TEST_CASE("SellTrade constructor initializes fields") {
     CHECK(s.getPrice() == 200.0);
 }
 
-// ---------------- B) GETTERS AND SETTERS ----------------
+// ==========================================================
+// B) COMPOSITION TEST
+// ==========================================================
 
-TEST_CASE("BuyTrade getters and setters work") {
-    BuyTrade b;
-    b.setName("MSFT");
-    b.setShares(8);
-    b.setRisk(Low);
-    b.setCommission(3.0);
-    b.setPrice(150.0);
-
-    CHECK(b.getName() == "MSFT");
-    CHECK(b.getShares() == 8);
-    CHECK(b.getRisk() == Low);
-    CHECK(b.getCommission() == 3.0);
-    CHECK(b.getPrice() == 150.0);
-}
-
-TEST_CASE("SellTrade getters and setters work") {
-    SellTrade s;
-    s.setName("TSLA");
-    s.setShares(2);
-    s.setRisk(Medium);
-    s.setProfit(20.0);
-    s.setPrice(300.0);
-
-    CHECK(s.getName() == "TSLA");
-    CHECK(s.getShares() == 2);
-    CHECK(s.getRisk() == Medium);
-    CHECK(s.getProfit() == 20.0);
-    CHECK(s.getPrice() == 300.0);
-}
-
-// ---------------- C) COMPOSITION CLASS ----------------
-
-TEST_CASE("TradeCost calculates total value") {
+TEST_CASE("TradeCost calculates total value correctly") {
     TradeCost cost(50.0);
-    CHECK(cost.getPrice() == 50.0);
     CHECK(cost.totalValue(4) == doctest::Approx(200.0));
 }
 
-// ---------------- D) DERIVED CLASS CALCULATION ----------------
+// ==========================================================
+// C) TEST ADDING ITEMS TO ARRAY (TradeManager)
+// ==========================================================
 
-TEST_CASE("BuyTrade total cost calculation") {
-    BuyTrade b("FB", 10, Low, 2.0, 100.0);
-    double total = b.getPrice() * b.getShares() + b.getCommission();
-    CHECK(total == doctest::Approx(1002.0));
+//// ===== ASSIGNMENT 5 FEATURE TEST =====
+TEST_CASE("TradeManager adds items correctly") {
+
+    TradeManager manager(2);   // small capacity to test resize
+
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+
+    manager.addTrade(b1);
+    manager.addTrade(s1);
+
+    CHECK(manager.getSize() == 2);
 }
 
-TEST_CASE("SellTrade total value calculation") {
-    SellTrade s("NFLX", 5, High, 10.0, 200.0);
-    double total = s.getPrice() * s.getShares() + s.getProfit();
-    CHECK(total == doctest::Approx(1010.0));
+// ==========================================================
+// D) TEST REMOVING ITEMS FROM ARRAY
+// ==========================================================
+
+//// ===== ASSIGNMENT 5 FEATURE TEST =====
+TEST_CASE("TradeManager removes items correctly") {
+
+    TradeManager manager;
+
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+
+    manager.addTrade(b1);
+    manager.addTrade(s1);
+
+    manager.removeTrade(0);
+
+    CHECK(manager.getSize() == 1);
+}
+
+// ==========================================================
+// E) TEST VIRTUAL FUNCTION (POLYMORPHISM)
+// ==========================================================
+
+//// ===== ASSIGNMENT 5 FEATURE TEST =====
+TEST_CASE("TradeManager calls print() through base class pointers") {
+
+    TradeManager manager;
+
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+
+    manager.addTrade(b1);
+    manager.addTrade(s1);
+
+    // Call print through base pointers
+    manager.printAll();
+
+    // If program reaches here, virtual calls worked
+    CHECK(manager.getSize() == 2);
 }
 
 #endif

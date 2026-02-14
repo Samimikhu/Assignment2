@@ -1,20 +1,26 @@
+/*
+Main application controller.
+
+Assignment 5:
+- Now uses TradeManager instead of fixed arrays.
+==========================================================
+*/
+
 #pragma once
-#include "BuyTrade.h"
-#include "SellTrade.h"
-using namespace std;
+#include "TradeManager.h"
 
 class StockApp {
 private:
-    static const int MAX_TRADES = 10;
-    BuyTrade buyTrades[MAX_TRADES];
-    int numBuy;
-    SellTrade sellTrades[MAX_TRADES];
-    int numSell;
+    //// ===== ASSIGNMENT 5 ADDITION =====
+    TradeManager manager;
+
 public:
     StockApp();
+
     void displayBanner();
     void addBuyTrade();
     void addSellTrade();
+	void removeTrade();
     void displaySummary();
     void showMenu();
 };

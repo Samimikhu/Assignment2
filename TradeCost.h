@@ -1,34 +1,25 @@
+/*
+Composition class used inside BuyTrade and SellTrade.
+
+Assignment 5:
+- Added as composition to separate price logic
+==========================================================
+*/
+
 #pragma once
-#include <iostream>
-#include <iomanip>
-using namespace std;
 
 class TradeCost {
 private:
     double pricePerShare;
 
 public:
-    // Default constructor
-    TradeCost() {
-        pricePerShare = 0.0;
-    }
+    TradeCost() : pricePerShare(0.0) {}
+    TradeCost(double p) : pricePerShare(p) {}
 
-    // Parameterized constructor
-    TradeCost(double p) {
-        pricePerShare = p;
-    }
+    void setPrice(double p) { pricePerShare = p; }
+    double getPrice() const { return pricePerShare; }
 
-    // Setter for pricePerShare
-    void setPrice(double p) {
-        pricePerShare = p;
-    }
-
-    // Getter for pricePerShare
-    double getPrice() const {
-        return pricePerShare;
-    }
-
-    // Calculate total value given number of shares
+    // Calculates total value based on shares
     double totalValue(int shares) const {
         return pricePerShare * shares;
     }

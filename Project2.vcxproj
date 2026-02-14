@@ -33,11 +33,13 @@
     <ClInclude Include="StockApp.h" />
     <ClInclude Include="Trade.h" />
     <ClInclude Include="TradeCost.h" />
+    <ClInclude Include="TradeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StockApp.cpp" />
     <ClCompile Include="Tests.cpp" />
+    <ClCompile Include="TradeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="StockAppClassDiagram.cd" />

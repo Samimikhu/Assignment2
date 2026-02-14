@@ -1,139 +1,220 @@
+/*
+Implements menu system and trade input.
+
+Assignment 5:
+- Dynamically creates trades using new
+- Stores them in TradeManager
+- Added full input validation to prevent invalid trades
+==========================================================
+*/
+
 #include "StockApp.h"
+#include "BuyTrade.h"
+#include "SellTrade.h"
+#include "TradeManager.h"
 #include <iostream>
-#include <iomanip>
-#include <fstream>
 using namespace std;
 
-// Constructor initializes counts
-StockApp::StockApp() {
-    numBuy = 0;
-    numSell = 0;
-}
+StockApp::StockApp() {}
 
-// Display welcome banner
 void StockApp::displayBanner() {
-    cout << "=== Welcome to Stock Tracker ===\n";
+    cout << "=== Stock Trading Application ===\n";
 }
 
-// Add a buy trade
 void StockApp::addBuyTrade() {
-    if (numBuy >= MAX_TRADES) {
-        cout << "Max buy trades reached!\n";
-        return;
-    }
 
     string symbol;
     int shares;
     double price, commission;
     int r;
 
-    cin.ignore();  // Clear input buffer
+    cin.ignore(10000, '\n'); 
 
-    cout << "Enter stock symbol: ";
+    cout << "Symbol: ";
     getline(cin, symbol);
 
-    cout << "Enter number of shares: ";
-    cin >> shares;
-
-    cout << "Enter price per share: ";
-    cin >> price;
-
-    cout << "Select risk (1=Low,2=Medium,3=High): ";
-    cin >> r;
-    RiskLevel risk = static_cast<RiskLevel>(r - 1);
-
-    cout << "Enter commission: ";
-    cin >> commission;
-
-    // Create BuyTrade object and add to array
-    BuyTrade bt(symbol, shares, risk, commission, price);
-    buyTrades[numBuy] = bt;
-    numBuy++;
-
-    // Save trade to file
-    ofstream file("buy_trades.txt", ios::app);
-    if (file) {
-        file << symbol << " " << shares << " " << price << " " << commission << " " << r << endl;
-        file.close();
-        cout << "Buy trade saved to buy_trades.txt\n";
-    }
-}
-
-// Add a sell trade
-void StockApp::addSellTrade() {
-    if (numSell >= MAX_TRADES) {
-        cout << "Max sell trades reached!\n";
+    if (symbol.empty()) {
+        cout << "Invalid symbol.\n";
         return;
     }
+
+    cout << "Shares: ";
+    if (!(cin >> shares)) {
+        cout << "Invalid input for shares.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    if (shares <= 0) {
+        cout << "Shares must be positive.\n";
+        return;
+    }
+
+    cout << "Price: ";
+    if (!(cin >> price)) {
+        cout << "Invalid input for price.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    if (price <= 0) {
+        cout << "Price must be positive.\n";
+        return;
+    }
+
+    cout << "Risk (1=Low,2=Medium,3=High): ";
+    if (!(cin >> r)) {
+        cout << "Invalid input for risk.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    if (r < 1 || r > 3) {
+        cout << "Risk must be 1, 2, or 3.\n";
+        return;
+    }
+
+    cout << "Commission: ";
+    if (!(cin >> commission)) {
+        cout << "Invalid input for commission.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    if (commission < 0) {
+        cout << "Commission cannot be negative.\n";
+        return;
+    }
+
+    RiskLevel risk = static_cast<RiskLevel>(r - 1);
+
+    //// ===== ASSIGNMENT 5 ADDITION =====
+    BaseTrade* trade = new BuyTrade(symbol, shares, risk, commission, price);
+    manager.addTrade(trade);
+
+    cout << "Buy trade added successfully.\n";
+}
+
+void StockApp::addSellTrade() {
 
     string symbol;
     int shares;
     double price, profit;
     int r;
 
-    cin.ignore();  // Clear input buffer
+    cin.ignore(10000, '\n');  
 
-    cout << "Enter stock symbol: ";
+    cout << "Symbol: ";
     getline(cin, symbol);
 
-    cout << "Enter number of shares: ";
-    cin >> shares;
+    if (symbol.empty()) {
+        cout << "Invalid symbol.\n";
+        return;
+    }
 
-    cout << "Enter price per share: ";
-    cin >> price;
+    cout << "Shares: ";
+    if (!(cin >> shares)) {
+        cout << "Invalid input for shares.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
 
-    cout << "Select risk (1=Low,2=Medium,3=High): ";
-    cin >> r;
+    if (shares <= 0) {
+        cout << "Shares must be positive.\n";
+        return;
+    }
+
+    cout << "Price: ";
+    if (!(cin >> price)) {
+        cout << "Invalid input for price.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    if (price <= 0) {
+        cout << "Price must be positive.\n";
+        return;
+    }
+
+    cout << "Risk (1=Low,2=Medium,3=High): ";
+    if (!(cin >> r)) {
+        cout << "Invalid input for risk.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    if (r < 1 || r > 3) {
+        cout << "Risk must be 1, 2, or 3.\n";
+        return;
+    }
+
+    cout << "Profit: ";
+    if (!(cin >> profit)) {
+        cout << "Invalid input for profit.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
     RiskLevel risk = static_cast<RiskLevel>(r - 1);
 
-    cout << "Enter profit: ";
-    cin >> profit;
+    //// ===== ASSIGNMENT 5 ADDITION =====
+    BaseTrade* trade = new SellTrade(symbol, shares, risk, profit, price);
+    manager.addTrade(trade);
 
-    // Create SellTrade object and add to array
-    SellTrade st(symbol, shares, risk, profit, price);
-    sellTrades[numSell] = st;
-    numSell++;
-
-    // Save trade to file
-    ofstream file("sell_trades.txt", ios::app);
-    if (file) {
-        file << symbol << " " << shares << " " << price << " " << profit << " " << r << endl;
-        file.close();
-        cout << "Sell trade saved to sell_trades.txt\n";
-    }
+    cout << "Sell trade added successfully.\n";
 }
 
-// Display all trades and summary
+void StockApp::removeTrade()
+{
+    if (manager.getSize() == 0) {
+        cout << "No trades to remove.\n";
+        return;
+    }
+
+    int index;
+
+    cout << "Enter index to remove: ";
+
+    if (!(cin >> index)) {
+        cout << "Invalid input.\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    manager.removeTrade(index);
+}
+
 void StockApp::displaySummary() {
-    cout << "\n=== Buy Trades ===\n";
-    for (int i = 0; i < numBuy; i++) {
-        buyTrades[i].print();
-    }
-
-    cout << "\n=== Sell Trades ===\n";
-    for (int i = 0; i < numSell; i++) {
-        sellTrades[i].print();
-    }
+    manager.printAll();
 }
 
-// Show menu and handle user choices
-void StockApp::showMenu() {
+void StockApp::showMenu()
+{
     int choice;
 
     do {
         cout << "\nMenu:\n";
         cout << "1. Add Buy Trade\n";
         cout << "2. Add Sell Trade\n";
-        cout << "3. View Summary\n";
-        cout << "4. Exit\n";
-        cout << "Choice: ";
-        cin >> choice;
+        cout << "3. Remove Trade\n";
+        cout << "4. View Summary\n";
+        cout << "5. Exit\n";
+        cout << "Enter choice: ";
 
-        while (cin.fail() || choice < 1 || choice > 4) {
+        if (!(cin >> choice)) {
+            cout << "Invalid input! Please enter a number.\n";
             cin.clear();
-            cin.ignore(1000, '\n');
-            cout << "Invalid. Enter 1-4: ";
-            cin >> choice;
+            cin.ignore(10000, '\n');
+            continue;
         }
 
         switch (choice) {
@@ -144,12 +225,17 @@ void StockApp::showMenu() {
             addSellTrade();
             break;
         case 3:
-            displaySummary();
+            removeTrade();
             break;
         case 4:
-            cout << "Exiting...\n";
+            displaySummary();
             break;
+        case 5:
+            cout << "Exiting program.\n";
+            break;
+        default:
+            cout << "Invalid choice. Please select 1-5.\n";
         }
 
-    } while (choice != 4);
+    } while (choice != 5);
 }
