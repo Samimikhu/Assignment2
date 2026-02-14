@@ -15,7 +15,7 @@ Unit tests using doctest framework.
 #include <sstream>
 
 // ==========================================================
-// A) CONSTRUCTOR TESTS
+// A) CONSTRUCTOR TESTSSS
 // ==========================================================
 
 TEST_CASE("BuyTrade constructor initializes fields") {
