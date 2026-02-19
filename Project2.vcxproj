@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="BaseTrade.h" />
     <ClInclude Include="BuyTrade.h" />
+    <ClInclude Include="DynamicArray.h" />
     <ClInclude Include="SellTrade.h" />
     <ClInclude Include="StockApp.h" />
     <ClInclude Include="Trade.h" />

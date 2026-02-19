@@ -9,37 +9,49 @@ Assignment 5 ADDITIONS:
 */
 
 #pragma once
-#include <string>
-#include "trade.h"
+#include <iostream>
+#include "Trade.h"
 using namespace std;
 
 class BaseTrade {
 protected:
-    string name;
     int shares;
+private:
+    string name;
     RiskLevel risk;
 
 public:
     BaseTrade() : name(""), shares(0), risk(Low) {}
-    BaseTrade(string n, int s, RiskLevel r)
-        : name(n), shares(s), risk(r) {
-    }
+    BaseTrade(const string& n, int s, RiskLevel r) : name(n), shares(s), risk(r) {}
 
-    //// ===== ASSIGNMENT 5 ADDITION =====
-    // Virtual destructor required for base class pointers
-    virtual ~BaseTrade() {}
-
-    // Setters
-    void setName(string n) { name = n; }
-    void setShares(int s) { shares = s; }
-    void setRisk(RiskLevel r) { risk = r; }
-
-    // Getters
+    void setName(const string& n) { name = n; }
     string getName() const { return name; }
+
+    void setShares(int s) { shares = s; }
     int getShares() const { return shares; }
+
+    void setRisk(RiskLevel r) { risk = r; }
     RiskLevel getRisk() const { return risk; }
 
-    //// ===== ASSIGNMENT 5 ADDITION =====
-    // Pure virtual function makes this an abstract class
-    virtual void print() const = 0;
+    // Print base info
+    void printBase() const {
+        cout << "Trade: " << name << ", Shares: " << shares << ", Risk: ";
+        switch (risk) {
+        case Low: cout << "Low"; break;
+        case Medium: cout << "Medium"; break;
+        case High: cout << "High"; break;
+        }
+    }
+
+    // ===== ASSIGNMENT 6 ADDITION =====
+    virtual void print() const = 0;             // pure virtual function
+    virtual void toStream(ostream& os) const = 0; // for operator<<
+
+    virtual ~BaseTrade() {}                     
+
+    // Operator<< overload
+    friend ostream& operator<<(ostream& os, const BaseTrade& trade) {
+        trade.toStream(os);
+        return os;
+    }
 };

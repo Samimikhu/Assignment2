@@ -15,20 +15,22 @@ Assignment 5 ADDITIONS:
 #include "BaseTrade.h"
 #include "TradeCost.h"
 #include <iostream>
+#include <iomanip>
 using namespace std;
 
 class SellTrade : public BaseTrade {
 private:
     double profit;
-
-    //// ===== ASSIGNMENT 5 ADDITION =====
-    TradeCost cost;   // Composition
+    TradeCost cost;
 
 public:
-    SellTrade() : BaseTrade(), profit(0.0), cost(0.0) {}
-
-    SellTrade(string n, int s, RiskLevel r, double p, double price)
-        : BaseTrade(n, s, r), profit(p), cost(price) {
+    SellTrade() : profit(0.0) {}
+    SellTrade(const string& n, int s, RiskLevel r, double p, double price) {
+        setName(n);
+        setShares(s);
+        setRisk(r);
+        profit = p;
+        cost.setPrice(price);
     }
 
     void setProfit(double p) { profit = p; }
@@ -37,12 +39,18 @@ public:
     void setPrice(double p) { cost.setPrice(p); }
     double getPrice() const { return cost.getPrice(); }
 
-    //// ===== ASSIGNMENT 5 ADDITION =====
     void print() const override {
-        cout << "[SELL] "
-            << name << " | Shares: " << shares
-            << " | Price: $" << cost.getPrice()
-            << " | Profit: $" << profit
-            << endl;
+        printBase();
+        cout << ", Profit: $" << fixed << setprecision(2) << profit
+            << ", Total Value: $" << fixed << setprecision(2)
+            << cost.totalValue(getShares()) + profit << endl;
+    }
+
+    void toStream(ostream& os) const override {
+        os << "[SELL] ";
+        printBase();
+        os << ", Profit: $" << fixed << setprecision(2) << profit
+            << ", Total Value: $" << fixed << setprecision(2)
+            << cost.totalValue(getShares()) + profit;
     }
 };

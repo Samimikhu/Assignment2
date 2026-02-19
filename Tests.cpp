@@ -12,10 +12,11 @@ Unit tests using doctest framework.
 #include "SellTrade.h"
 #include "TradeManager.h"
 #include "TradeCost.h"
+#include "DynamicArray.h" // new
 #include <sstream>
 
 // ==========================================================
-// A) CONSTRUCTOR TESTSSS
+// A) CONSTRUCTOR TESTS
 // ==========================================================
 
 TEST_CASE("BuyTrade constructor initializes fields") {
@@ -51,7 +52,6 @@ TEST_CASE("TradeCost calculates total value correctly") {
 // C) TEST ADDING ITEMS TO ARRAY (TradeManager)
 // ==========================================================
 
-//// ===== ASSIGNMENT 5 FEATURE TEST =====
 TEST_CASE("TradeManager adds items correctly") {
 
     TradeManager manager(2);   // small capacity to test resize
@@ -69,7 +69,6 @@ TEST_CASE("TradeManager adds items correctly") {
 // D) TEST REMOVING ITEMS FROM ARRAY
 // ==========================================================
 
-//// ===== ASSIGNMENT 5 FEATURE TEST =====
 TEST_CASE("TradeManager removes items correctly") {
 
     TradeManager manager;
@@ -89,7 +88,6 @@ TEST_CASE("TradeManager removes items correctly") {
 // E) TEST VIRTUAL FUNCTION (POLYMORPHISM)
 // ==========================================================
 
-//// ===== ASSIGNMENT 5 FEATURE TEST =====
 TEST_CASE("TradeManager calls print() through base class pointers") {
 
     TradeManager manager;
@@ -100,11 +98,88 @@ TEST_CASE("TradeManager calls print() through base class pointers") {
     manager.addTrade(b1);
     manager.addTrade(s1);
 
-    // Call print through base pointers
     manager.printAll();
 
-    // If program reaches here, virtual calls worked
     CHECK(manager.getSize() == 2);
+}
+
+// ==========================================================
+// F) ASSIGNMENT 6 ADDITIONS
+// ==========================================================
+
+// Operator== test
+TEST_CASE("BuyTrade equality") {
+    BuyTrade b1("AAPL", 10, Medium, 5.0, 100.0);
+    BuyTrade b2("AAPL", 10, Low, 2.0, 50.0);
+    BuyTrade b3("MSFT", 10, Medium, 5.0, 100.0);
+    CHECK(b1 == b2);
+    CHECK_FALSE(b1 == b3);
+}
+
+// Operator<< test
+TEST_CASE("Operator<<") {
+    BuyTrade b("AAPL", 10, Medium, 5.0, 100.0);
+    std::ostringstream out;
+    out << b;
+    CHECK(out.str().find("[BUY]") != std::string::npos);
+}
+
+// TradeManager operator[] test
+TEST_CASE("TradeManager indexing") {
+    TradeManager manager;
+    BaseTrade* b = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.addTrade(b);
+    CHECK(manager[0] == b);
+    CHECK(manager[-1] == nullptr); // out-of-bounds
+}
+
+// TradeManager operator+= and operator-=
+TEST_CASE("TradeManager add/remove operators") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager += b1;
+    CHECK(manager.getSize() == 1);
+    manager -= 0;
+    CHECK(manager.getSize() == 0);
+}
+
+// ==========================================================
+// G) FUNCTION TEMPLATE TEST
+// ==========================================================
+
+TEST_CASE("Function template multiply works with int") {
+    int result = multiply(5, 4); // from StockApp.cpp
+    CHECK(result == 20);
+}
+
+TEST_CASE("Function template multiply works with double") {
+    double result = multiply(2.5, 4.0);
+    CHECK(result == doctest::Approx(10.0));
+}
+
+// ==========================================================
+// H) CLASS TEMPLATE TEST
+// ==========================================================
+
+TEST_CASE("DynamicArray template add/remove") {
+    DynamicArray<int> arr;
+    arr.add(10);
+    arr.add(20);
+    CHECK(arr.getSize() == 2);
+    CHECK(arr[0] == 10);
+    CHECK(arr[1] == 20);
+
+    arr.remove(0);
+    CHECK(arr.getSize() == 1);
+    CHECK(arr[0] == 20);
+}
+
+TEST_CASE("DynamicArray template bounds checking") {
+    DynamicArray<int> arr;
+    arr.add(42);
+    CHECK(arr[0] == 42);
+    CHECK(arr[-1] == 0); // dummy value
+    CHECK(arr[100] == 0); // dummy value
 }
 
 #endif

@@ -2,66 +2,61 @@
 #include <iostream>
 using namespace std;
 
-// Constructor
-TradeManager::TradeManager(int cap) {
-    capacity = cap;
-    size = 0;
-    items = new BaseTrade * [capacity];
-}
-
 // Destructor
 TradeManager::~TradeManager() {
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < items.getSize(); i++) {
         delete items[i];  // delete each dynamically allocated BaseTrade
     }
-    delete[] items;       // delete the array itself
 }
 
-// Resize array
-void TradeManager::resize() {
-    capacity *= 2;
-    BaseTrade** newArray = new BaseTrade * [capacity];
-
-    for (int i = 0; i < size; i++) {
-        newArray[i] = items[i];
-    }
-
-    delete[] items;
-    items = newArray;
-}
-
-// Add a trade
+// Add a trade 
 void TradeManager::addTrade(BaseTrade* trade) {
-    if (size == capacity) {
-        resize();
-    }
-    items[size] = trade;
-    size++;
+    items.add(trade);
 }
 
 // Remove a trade
-void TradeManager::removeTrade(int index) {  
-    if (index < 0 || index >= size) {
+void TradeManager::removeTrade(int index) {
+    if (index < 0 || index >= items.getSize()) {
         cout << "Invalid index.\n";
         return;
     }
 
     delete items[index];  // free memory
-
-    // shift left
-    for (int i = index; i < size - 1; i++) {
-        items[i] = items[i + 1];
-    }
-    size--;
+    items.remove(index);
 }
 
 // Print all trades (polymorphic call)
 void TradeManager::printAll() const {
-    for (int i = 0; i < size; i++) {
-        items[i]->print(); // calls derived print() at runtime
+    for (int i = 0; i < items.getSize(); i++) {
+        BaseTrade* t = items[i];
+        if (t != nullptr)
+            t->print();
     }
 }
 
 int TradeManager::getSize() const {
-    return size;
+    return items.getSize();
+}
+
+// ===== ASSIGNMENT 6 ADDITIONS =====
+
+// operator[] with bounds checking
+BaseTrade* TradeManager::operator[](int index) const {
+    if (index < 0 || index >= items.getSize()) {
+        cout << "Index out of bounds!\n";
+        return nullptr;
+    }
+    return items[index];
+}
+
+// operator+= adds a trade pointer
+TradeManager& TradeManager::operator+=(BaseTrade* trade) {
+    addTrade(trade);
+    return *this;      // return this object (operator chaining allowed)
+}
+
+// operator-= removes by index
+TradeManager& TradeManager::operator-=(int index) {
+    removeTrade(index);
+    return *this;
 }

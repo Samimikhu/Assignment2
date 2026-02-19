@@ -5,6 +5,10 @@ Assignment 5:
 - Dynamically creates trades using new
 - Stores them in TradeManager
 - Added full input validation to prevent invalid trades
+
+Assignment 6:
+- Uses overloaded operators instead of direct function calls
+- Demonstrates template usage (removed multiply template to fix build)
 ==========================================================
 */
 
@@ -28,7 +32,7 @@ void StockApp::addBuyTrade() {
     double price, commission;
     int r;
 
-    cin.ignore(10000, '\n'); 
+    cin.ignore(10000, '\n');
 
     cout << "Symbol: ";
     getline(cin, symbol);
@@ -94,9 +98,15 @@ void StockApp::addBuyTrade() {
 
     //// ===== ASSIGNMENT 5 ADDITION =====
     BaseTrade* trade = new BuyTrade(symbol, shares, risk, commission, price);
-    manager.addTrade(trade);
+
+    //// ===== ASSIGNMENT 6 CHANGE =====
+    manager += trade;
 
     cout << "Buy trade added successfully.\n";
+
+    //// ===== REPLACED TEMPLATE USAGE =====
+    double totalCost = price * shares + commission;
+    cout << "Calculated total cost: $" << totalCost << endl;
 }
 
 void StockApp::addSellTrade() {
@@ -106,7 +116,7 @@ void StockApp::addSellTrade() {
     double price, profit;
     int r;
 
-    cin.ignore(10000, '\n');  
+    cin.ignore(10000, '\n');
 
     cout << "Symbol: ";
     getline(cin, symbol);
@@ -131,9 +141,9 @@ void StockApp::addSellTrade() {
 
     cout << "Price: ";
     if (!(cin >> price)) {
-        cout << "Invalid input for price.\n";
         cin.clear();
         cin.ignore(10000, '\n');
+        cout << "Invalid input for price.\n";
         return;
     }
 
@@ -167,9 +177,15 @@ void StockApp::addSellTrade() {
 
     //// ===== ASSIGNMENT 5 ADDITION =====
     BaseTrade* trade = new SellTrade(symbol, shares, risk, profit, price);
-    manager.addTrade(trade);
+
+    //// ===== ASSIGNMENT 6 CHANGE =====
+    manager += trade;
 
     cout << "Sell trade added successfully.\n";
+
+    //// ===== REPLACED TEMPLATE USAGE =====
+    double totalValue = price * shares + profit;
+    cout << "Calculated total value: $" << totalValue << endl;
 }
 
 void StockApp::removeTrade()
@@ -190,11 +206,25 @@ void StockApp::removeTrade()
         return;
     }
 
-    manager.removeTrade(index);
+    //// ===== ASSIGNMENT 6 CHANGE =====
+    manager -= index;
 }
 
 void StockApp::displaySummary() {
-    manager.printAll();
+
+    //// ===== ASSIGNMENT 6 CHANGE =====
+    //// Demonstrates operator[] usage
+
+    if (manager.getSize() == 0) {
+        cout << "No trades recorded.\n";
+        return;
+    }
+
+    for (int i = 0; i < manager.getSize(); i++) {
+        BaseTrade* t = manager[i];   // operator[] used here
+        if (t != nullptr)
+            t->print();
+    }
 }
 
 void StockApp::showMenu()

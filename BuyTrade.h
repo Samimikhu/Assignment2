@@ -12,20 +12,22 @@ Assignment 5 ADDITIONS:
 #include "BaseTrade.h"
 #include "TradeCost.h"
 #include <iostream>
+#include <iomanip>
 using namespace std;
 
 class BuyTrade : public BaseTrade {
 private:
     double commission;
-
-    //// ===== ASSIGNMENT 5 ADDITION =====
-    TradeCost cost;   // Composition
+    TradeCost cost;
 
 public:
-    BuyTrade() : BaseTrade(), commission(0.0), cost(0.0) {}
-
-    BuyTrade(string n, int s, RiskLevel r, double c, double price)
-        : BaseTrade(n, s, r), commission(c), cost(price) {
+    BuyTrade() : commission(0.0) {}
+    BuyTrade(const string& n, int s, RiskLevel r, double c, double price) {
+        setName(n);
+        setShares(s);
+        setRisk(r);
+        commission = c;
+        cost.setPrice(price);
     }
 
     void setCommission(double c) { commission = c; }
@@ -34,13 +36,23 @@ public:
     void setPrice(double p) { cost.setPrice(p); }
     double getPrice() const { return cost.getPrice(); }
 
-    //// ===== ASSIGNMENT 5 ADDITION =====
-    // Overridden virtual function
     void print() const override {
-        cout << "[BUY] "
-            << name << " | Shares: " << shares
-            << " | Price: $" << cost.getPrice()
-            << " | Commission: $" << commission
-            << endl;
+        printBase();
+        cout << ", Commission: $" << fixed << setprecision(2) << commission
+            << ", Total Cost: $" << fixed << setprecision(2)
+            << cost.totalValue(getShares()) + commission << endl;
+    }
+
+    void toStream(ostream& os) const override {
+        os << "[BUY] ";
+        printBase();
+        os << ", Commission: $" << fixed << setprecision(2) << commission
+            << ", Total Cost: $" << fixed << setprecision(2)
+            << cost.totalValue(getShares()) + commission;
+    }
+
+    // ===== ASSIGNMENT 6 ADDITION =====
+    bool operator==(const BuyTrade& other) const {
+        return getName() == other.getName() && getShares() == other.getShares();
     }
 };
