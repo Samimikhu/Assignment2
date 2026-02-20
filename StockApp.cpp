@@ -16,6 +16,7 @@ Assignment 6:
 #include "BuyTrade.h"
 #include "SellTrade.h"
 #include "TradeManager.h"
+#include "DynamicArray.h"
 #include <iostream>
 using namespace std;
 
@@ -104,8 +105,8 @@ void StockApp::addBuyTrade() {
 
     cout << "Buy trade added successfully.\n";
 
-    //// ===== REPLACED TEMPLATE USAGE =====
-    double totalCost = price * shares + commission;
+    //// ===== ASSIGNMENT 6 TEMPLATE USAGE =====
+    double totalCost = calculateTotal<double>(price, (double)shares) + commission;
     cout << "Calculated total cost: $" << totalCost << endl;
 }
 
@@ -183,8 +184,8 @@ void StockApp::addSellTrade() {
 
     cout << "Sell trade added successfully.\n";
 
-    //// ===== REPLACED TEMPLATE USAGE =====
-    double totalValue = price * shares + profit;
+    //// ===== ASSIGNMENT 6 TEMPLATE USAGE =====
+    double totalValue = calculateTotal<double>(price, (double)shares) + profit;
     cout << "Calculated total value: $" << totalValue << endl;
 }
 
@@ -213,7 +214,7 @@ void StockApp::removeTrade()
 void StockApp::displaySummary() {
 
     //// ===== ASSIGNMENT 6 CHANGE =====
-    //// Demonstrates operator[] usage
+    //// Demonstrates operator[] and operator<< usage
 
     if (manager.getSize() == 0) {
         cout << "No trades recorded.\n";
@@ -223,7 +224,7 @@ void StockApp::displaySummary() {
     for (int i = 0; i < manager.getSize(); i++) {
         BaseTrade* t = manager[i];   // operator[] used here
         if (t != nullptr)
-            t->print();
+            cout << *t << endl;      // operator<< used here
     }
 }
 

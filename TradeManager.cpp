@@ -2,6 +2,9 @@
 #include <iostream>
 using namespace std;
 
+// Constructor
+TradeManager::TradeManager(int cap) : items(cap) {}
+
 // Destructor
 TradeManager::~TradeManager() {
     for (int i = 0; i < items.getSize(); i++) {
@@ -21,16 +24,14 @@ void TradeManager::removeTrade(int index) {
         return;
     }
 
-    delete items[index];  // free memory
-    items.remove(index);
+    delete items[index]; // free memory
+    items.remove(index); // shift left automatically
 }
 
 // Print all trades (polymorphic call)
 void TradeManager::printAll() const {
     for (int i = 0; i < items.getSize(); i++) {
-        BaseTrade* t = items[i];
-        if (t != nullptr)
-            t->print();
+        items[i]->print();
     }
 }
 
@@ -52,11 +53,11 @@ BaseTrade* TradeManager::operator[](int index) const {
 // operator+= adds a trade pointer
 TradeManager& TradeManager::operator+=(BaseTrade* trade) {
     addTrade(trade);
-    return *this;      // return this object (operator chaining allowed)
+    return *this;      // allow chaining
 }
 
 // operator-= removes by index
 TradeManager& TradeManager::operator-=(int index) {
     removeTrade(index);
-    return *this;
+    return *this;      // allow chaining
 }
