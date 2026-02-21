@@ -1,45 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
   <Class Name="BaseTrade">
-    <Position X="6.75" Y="4.25" Width="1.5" />
+    <Position X="6.75" Y="7.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAARAABAAAAAABAAAAAAAAAAAEAABCAAAEABAAEAE=</HashCode>
+      <HashCode>AAQAARAABAAAAAABAAAAAAAgAAAEBABCAAAEABAAEAE=</HashCode>
       <FileName>BaseTrade.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BuyTrade">
     <Position X="4.25" Y="7.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAEQAAAAARAAAAEQAAAAAAAABAAAAAA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAAEQAAAAARAgAAEQAAAAAAAABAAAAAA=</HashCode>
       <FileName>BuyTrade.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SellTrade">
     <Position X="8.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAACAAAAAAARAAAAAQAgAAAAAAACAAAAI=</HashCode>
+      <HashCode>AAQAAAAAAAAAACAAAAAAARAgAAAQAgAAAAAAACAAAAI=</HashCode>
       <FileName>SellTrade.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TradeCost">
-    <Position X="6.75" Y="9" Width="1.5" />
+    <Position X="6.75" Y="11.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAAAAAAAAAAAARAAAABAAACAAAAAAAAAAAA=</HashCode>
       <FileName>TradeCost.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="StockApp">
-    <Position X="6.75" Y="11.75" Width="1.5" />
+    <Position X="6.75" Y="13.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAEAQAAgAAAAAAAAAAABAAAEAAAAAAAAAAAACAACAAA=</HashCode>
       <FileName>StockApp.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TradeManager">
-    <Position X="6.75" Y="0.5" Width="1.5" />
+    <Position X="6.75" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIAAgAIAEAAAAAIoAAAAAAAAEAAAAAQAAAAAAAQA=</HashCode>
+      <HashCode>AAAAIAAgAIAEAAAAAAgAAQAAAAEEAAAAAAAAAAAAAQA=</HashCode>
       <FileName>TradeManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DynamicArray&lt;T&gt;">
+    <Position X="6.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAEAIoAAAAAAAEAAAAAAQAAAAACEAA=</HashCode>
+      <FileName>DynamicArray.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
