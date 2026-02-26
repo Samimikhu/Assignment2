@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "BaseTrade.h"
 using namespace std;
 
 // ===== ASSIGNMENT 6 FUNCTION TEMPLATE =====
@@ -44,24 +45,28 @@ public:
     }
     void remove(int index)
     {
+        // ===== ASSIGNMENT 7 CHANGE =====
+        // Now throws TradeException instead of silently returning on invalid index
         if (index < 0 || index >= size)
-            return;
+            throw TradeException("DynamicArray: invalid removal index");
         for (int i = index; i < size - 1; i++)
             items[i] = items[i + 1];
         size--;
     }
     T& operator[](int index)
     {
-        static T dummy{};
+        // ===== ASSIGNMENT 7 CHANGE =====
+        // Now throws TradeException instead of returning dummy value on invalid index
         if (index < 0 || index >= size)
-            return dummy;
+            throw TradeException("DynamicArray: index out of bounds");
         return items[index];
     }
     const T& operator[](int index) const  // const-safe version
     {
-        static T dummy{};
+        // ===== ASSIGNMENT 7 CHANGE =====
+        // Const version also throws TradeException on invalid index
         if (index < 0 || index >= size)
-            return dummy;
+            throw TradeException("DynamicArray: index out of bounds");
         return items[index];
     }
     int getSize() const

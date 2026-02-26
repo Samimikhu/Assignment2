@@ -9,6 +9,9 @@ Assignment 5:
 Assignment 6:
 - Uses overloaded operators instead of direct function calls
 - Demonstrates template usage (removed multiply template to fix build)
+
+Assignment 7:
+- Added try/catch blocks to handle exceptions from operators
 ==========================================================
 */
 
@@ -208,7 +211,16 @@ void StockApp::removeTrade()
     }
 
     //// ===== ASSIGNMENT 6 CHANGE =====
-    manager -= index;
+    //// ===== ASSIGNMENT 7 CHANGE =====
+    // try block attempts removal using operator-=
+    // if index is invalid operator-= throws TradeException
+    // catch block handles it gracefully so program does not crash
+    try {
+        manager -= index;
+    }
+    catch (const TradeException& e) {
+        cout << "Error: " << e.what() << endl;
+    }
 }
 
 void StockApp::displaySummary() {
@@ -221,10 +233,19 @@ void StockApp::displaySummary() {
         return;
     }
 
-    for (int i = 0; i < manager.getSize(); i++) {
-        BaseTrade* t = manager[i];   // operator[] used here
-        if (t != nullptr)
-            cout << *t << endl;      // operator<< used here
+    //// ===== ASSIGNMENT 7 CHANGE =====
+    // try block attempts to access each trade using operator[]
+    // if index is invalid operator[] throws TradeException
+    // catch block handles it gracefully so program does not crash
+    try {
+        for (int i = 0; i < manager.getSize(); i++) {
+            BaseTrade* t = manager[i];   // operator[] used here
+            if (t != nullptr)
+                cout << *t << endl;      // operator<< used here
+        }
+    }
+    catch (const TradeException& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 

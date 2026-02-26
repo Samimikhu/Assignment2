@@ -97,13 +97,15 @@ TEST_CASE("Operator<< SellTrade") {
     CHECK(out.str().find("[SELL]") != std::string::npos);
 }
 // TradeManager operator[] test
+// ===== ASSIGNMENT 7 CHANGE =====
+// Updated to check that invalid indexes throw TradeException instead of returning nullptr
 TEST_CASE("TradeManager indexing") {
     TradeManager manager;
     BaseTrade* b = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
     manager.addTrade(b);
     CHECK(manager[0] == b);
-    CHECK(manager[-1] == nullptr);
-    CHECK(manager[99] == nullptr);
+    CHECK_THROWS_AS(manager[-1], TradeException);  // negative index throws
+    CHECK_THROWS_AS(manager[99], TradeException);  // index too large throws
 }
 // TradeManager operator+= and operator-=
 TEST_CASE("TradeManager add/remove operators") {
@@ -123,15 +125,14 @@ TEST_CASE("calculateTotal works with doubles") {
 TEST_CASE("calculateTotal works with ints") {
     CHECK(calculateTotal<int>(3, 4) == 12);
 }
-// Class template tests
 TEST_CASE("DynamicArray resizes and stores correctly") {
-    DynamicArray<int> arr(2);  // capacity of 2
+    DynamicArray<int> arr(2);
     arr.add(1);
     arr.add(2);
-    arr.add(3);  // triggers resize — capacity doubles to 4
+    arr.add(3);
     arr.add(4);
-    CHECK(arr.getSize() == 4);  // all 4 items stored after resize
-    CHECK(arr[0] == 1);         // items preserved after resize
+    CHECK(arr.getSize() == 4);
+    CHECK(arr[0] == 1);
     CHECK(arr[3] == 4);
 }
 TEST_CASE("DynamicArray removes and shifts correctly") {
@@ -139,10 +140,45 @@ TEST_CASE("DynamicArray removes and shifts correctly") {
     arr.add(10);
     arr.add(20);
     arr.add(30);
-    arr.remove(1);              // remove middle item (20)
-    CHECK(arr.getSize() == 2);  // size decreased
-    CHECK(arr[0] == 10);        // first item unchanged
-    CHECK(arr[1] == 30);        // shifted left correctly
+    arr.remove(1);
+    CHECK(arr.getSize() == 2);
+    CHECK(arr[0] == 10);
+    CHECK(arr[1] == 30);
 }
-
+// ==========================================================
+// H) ASSIGNMENT 7 EXCEPTION TESTS
+// ==========================================================
+// Tests that custom exception stores and returns message correctly
+TEST_CASE("TradeException stores and returns message") {
+    TradeException ex("test error");
+    CHECK(string(ex.what()) == "test error");
+}
+// Tests that operator[] throws TradeException on invalid index
+TEST_CASE("TradeManager operator[] throws on invalid index") {
+    TradeManager manager;
+    BaseTrade* b = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.addTrade(b);
+    CHECK_THROWS_AS(manager[-1], TradeException);  // negative index
+    CHECK_THROWS_AS(manager[99], TradeException);  // index too large
+}
+// Tests that operator-= throws TradeException on invalid index
+TEST_CASE("TradeManager operator-= throws on invalid index") {
+    TradeManager manager;
+    CHECK_THROWS_AS(manager -= 0, TradeException);   // empty manager
+    CHECK_THROWS_AS(manager -= -1, TradeException);  // negative index
+}
+// Tests that DynamicArray operator[] throws on invalid index
+TEST_CASE("DynamicArray operator[] throws on invalid index") {
+    DynamicArray<int> arr(4);
+    arr.add(10);
+    CHECK_THROWS_AS(arr[-1], TradeException);   // negative index
+    CHECK_THROWS_AS(arr[99], TradeException);   // index too large
+}
+// Tests that DynamicArray remove() throws on invalid index
+TEST_CASE("DynamicArray remove throws on invalid index") {
+    DynamicArray<int> arr(4);
+    arr.add(10);
+    CHECK_THROWS_AS(arr.remove(-1), TradeException);  // negative index
+    CHECK_THROWS_AS(arr.remove(99), TradeException);  // index too large
+}
 #endif

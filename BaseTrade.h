@@ -1,17 +1,34 @@
 /*
 Abstract base class for BuyTrade and SellTrade.
-
 Assignment 5 ADDITIONS:
 - Converted to ABSTRACT CLASS
 - Added pure virtual function print()
 - Added virtual destructor for polymorphism
+Assignment 7 ADDITIONS:
+- Added custom TradeException class
 ==========================================================
 */
-
 #pragma once
 #include <iostream>
+#include <exception>
 #include "Trade.h"
 using namespace std;
+
+// ===== ASSIGNMENT 7 ADDITION =====
+// Custom exception class specific to the trading program
+// Derives from std::exception so it works with standard C++ exception handling
+class TradeException : public exception {
+private:
+    string message;  // stores the error message
+public:
+    // Constructor takes an error message and stores it
+    TradeException(const string& msg) : message(msg) {}
+    // Overrides what() from std::exception to return our custom message
+    // noexcept means this function itself will never throw
+    const char* what() const noexcept override {
+        return message.c_str();  // convert string to const char*
+    }
+};
 
 class BaseTrade {
 protected:
@@ -19,20 +36,15 @@ protected:
 private:
     string name;
     RiskLevel risk;
-
 public:
     BaseTrade() : name(""), shares(0), risk(Low) {}
     BaseTrade(const string& n, int s, RiskLevel r) : name(n), shares(s), risk(r) {}
-
     void setName(const string& n) { name = n; }
     string getName() const { return name; }
-
     void setShares(int s) { shares = s; }
     int getShares() const { return shares; }
-
     void setRisk(RiskLevel r) { risk = r; }
     RiskLevel getRisk() const { return risk; }
-
     // Print base info
     void printBase() const {
         cout << "Trade: " << name << ", Shares: " << shares << ", Risk: ";
@@ -42,13 +54,10 @@ public:
         case High: cout << "High"; break;
         }
     }
-
     // ===== ASSIGNMENT 6 ADDITION =====
     virtual void print() const = 0;             // pure virtual function
-    virtual void toStream(ostream& os) const = 0; // for operator<<
-
-    virtual ~BaseTrade() {}                     
-
+    virtual void toStream(ostream& os) const = 0; // for operator
+    virtual ~BaseTrade() {}
     // Operator<< overload
     friend ostream& operator<<(ostream& os, const BaseTrade& trade) {
         trade.toStream(os);
