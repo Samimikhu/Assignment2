@@ -9,7 +9,7 @@ TradeManager::~TradeManager() {
         delete items[i];  // delete each dynamically allocated BaseTrade
     }
 }
-// Add a trade 
+// Add a trade
 void TradeManager::addTrade(BaseTrade* trade) {
     items.add(trade);
 }
@@ -53,4 +53,21 @@ TradeManager& TradeManager::operator-=(int index) {
         throw TradeException("TradeManager: invalid removal index");
     removeTrade(index);
     return *this;      // allow chaining
+}
+// ===== ASSIGNMENT 8 ADDITIONS =====
+// Private recursive helper function
+// BASE CASE: index reaches end of list — stop recursion
+// RECURSIVE CASE: print current trade then call self with next index
+void TradeManager::printAllRecursive(int index) const {
+    // BASE CASE — no more trades to print, stop recursion
+    if (index >= items.getSize())
+        return;
+    // print current trade using polymorphic print()
+    items[index]->print();
+    // RECURSIVE CASE — call self with next index
+    printAllRecursive(index + 1);
+}
+// Public interface — starts recursion from index 0
+void TradeManager::printAllRecursive() const {
+    printAllRecursive(0);
 }

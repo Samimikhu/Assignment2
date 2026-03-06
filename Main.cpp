@@ -1,14 +1,25 @@
 #include "StockApp.h"
 #include <iostream>
+
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+
 using namespace std;
 
-#ifndef RUN_TESTS   // Prevent conflict with unit test main
-
+#ifndef RUN_TESTS
 int main() {
-    StockApp app;          
-    app.displayBanner();   
-    app.showMenu();        
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+    
+    {
+        StockApp app;
+        app.displayBanner();
+        app.showMenu();
+    } 
+
+    
+    _CrtDumpMemoryLeaks();
+
     return 0;
 }
-
 #endif

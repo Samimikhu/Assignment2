@@ -181,4 +181,37 @@ TEST_CASE("DynamicArray remove throws on invalid index") {
     CHECK_THROWS_AS(arr.remove(-1), TradeException);  // negative index
     CHECK_THROWS_AS(arr.remove(99), TradeException);  // index too large
 }
+// ==========================================================
+// I) ASSIGNMENT 8 RECURSION TESTS
+// ==========================================================
+// Tests that printAllRecursive runs without errors on empty manager
+TEST_CASE("printAllRecursive works on empty manager") {
+    TradeManager manager;
+    manager.printAllRecursive();  // should not crash or throw
+    CHECK(manager.getSize() == 0);
+}
+// Tests that printAllRecursive prints all trades correctly
+TEST_CASE("printAllRecursive prints all trades") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+    BaseTrade* b2 = new BuyTrade("GOOG", 3, Medium, 1.0, 50.0);
+    manager.addTrade(b1);
+    manager.addTrade(s1);
+    manager.addTrade(b2);
+    manager.printAllRecursive();  // should print all 3 trades
+    CHECK(manager.getSize() == 3);  // all trades still in manager after print
+}
+// Tests that printAllRecursive and printAll produce same number of trades
+TEST_CASE("printAllRecursive matches printAll behavior") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+    manager.addTrade(b1);
+    manager.addTrade(s1);
+    // both should work on the same manager without errors
+    manager.printAll();
+    manager.printAllRecursive();
+    CHECK(manager.getSize() == 2);
+}
 #endif
