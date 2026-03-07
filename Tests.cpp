@@ -182,7 +182,7 @@ TEST_CASE("DynamicArray remove throws on invalid index") {
     CHECK_THROWS_AS(arr.remove(99), TradeException);  // index too large
 }
 // ==========================================================
-// I) ASSIGNMENT 8 RECURSION TESTS
+// I) NEW ASSIGNMENT 8 RECURSION TESTS
 // ==========================================================
 // Tests that printAllRecursive runs without errors on empty manager
 TEST_CASE("printAllRecursive works on empty manager") {
