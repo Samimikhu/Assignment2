@@ -10,7 +10,7 @@ private:
     //// ===== ASSIGNMENT 6 CHANGE =====
     DynamicArray<BaseTrade*> items;   // Template dynamic array
     // ===== ASSIGNMENT 8 ADDITION =====
-    // Private recursive helper — takes index as parameter
+    // Private helper for recursive print
     void printAllRecursive(int index) const;
 public:
     TradeManager(int cap = 5);        // default capacity
@@ -24,6 +24,13 @@ public:
     TradeManager& operator+=(BaseTrade* trade);
     TradeManager& operator-=(int index);
     // ===== ASSIGNMENT 8 ADDITION =====
-    // Public interface — starts recursion from index 0
+    // Public interface for recursive print
     void printAllRecursive() const;
+    // ===== ASSIGNMENT 9 ADDITIONS =====
+    // Sequential search — returns index of trade by name or -1 if not found
+    int sequentialSearch(const string& name) const;
+    // Bubble sort — sorts trades alphabetically by name
+    void bubbleSort();
+    // Binary search — must call bubbleSort() first, returns index or -1
+    int binarySearch(const string& name) const;
 };

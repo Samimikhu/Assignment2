@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <vector>
 #include "BaseTrade.h"
 using namespace std;
 
@@ -10,67 +11,68 @@ T calculateTotal(T price, T quantity) {
 }
 
 //// ===== ASSIGNMENT 6 TEMPLATE CLASS =====
+// ===== ASSIGNMENT 9 CHANGE =====
+// Replaced raw array (T* items) with std::vector<T>
+// resize() removed — vector handles dynamic resizing automatically
 template <typename T>
 class DynamicArray
 {
 private:
-    T* items;
-    int size;
-    int capacity;
-    void resize()
-    {
-        capacity *= 2;
-        T* newArray = new T[capacity];
-        for (int i = 0; i < size; i++)
-            newArray[i] = items[i];
-        delete[] items;
-        items = newArray;
-    }
+    // ===== ASSIGNMENT 9 CHANGE =====
+    // std::vector replaces raw array, size, and capacity variables
+    vector<T> items;
 public:
     DynamicArray(int cap = 4)
     {
-        capacity = cap;
-        size = 0;
-        items = new T[capacity];
+        // ===== ASSIGNMENT 9 CHANGE =====
+        // reserve() pre-allocates memory like capacity did before
+        items.reserve(cap);
     }
     ~DynamicArray()
     {
-        delete[] items;
+        // ===== ASSIGNMENT 9 CHANGE =====
+        // vector destructor handles memory automatically — no delete[] needed
     }
     void add(T item)
     {
-        if (size == capacity)
-            resize();
-        items[size++] = item;
+        // ===== ASSIGNMENT 9 CHANGE =====
+        // push_back() replaces manual resize and items[size++] = item
+        items.push_back(item);
     }
     void remove(int index)
     {
         // ===== ASSIGNMENT 7 CHANGE =====
         // Now throws TradeException instead of silently returning on invalid index
-        if (index < 0 || index >= size)
+        if (index < 0 || index >= (int)items.size())
             throw TradeException("DynamicArray: invalid removal index");
-        for (int i = index; i < size - 1; i++)
-            items[i] = items[i + 1];
-        size--;
+        // ===== ASSIGNMENT 9 CHANGE =====
+        // erase() replaces manual shift loop — vector handles shifting automatically
+        items.erase(items.begin() + index);
     }
     T& operator[](int index)
     {
         // ===== ASSIGNMENT 7 CHANGE =====
         // Now throws TradeException instead of returning dummy value on invalid index
-        if (index < 0 || index >= size)
+        if (index < 0 || index >= (int)items.size())
             throw TradeException("DynamicArray: index out of bounds");
-        return items[index];
+        // ===== ASSIGNMENT 9 CHANGE =====
+        // .at() used for bounds-safe access
+        return items.at(index);
     }
     const T& operator[](int index) const  // const-safe version
     {
         // ===== ASSIGNMENT 7 CHANGE =====
         // Const version also throws TradeException on invalid index
-        if (index < 0 || index >= size)
+        if (index < 0 || index >= (int)items.size())
             throw TradeException("DynamicArray: index out of bounds");
-        return items[index];
+        // ===== ASSIGNMENT 9 CHANGE =====
+        // .at() used for bounds-safe access
+        return items.at(index);
     }
     int getSize() const
     {
-        return size;
+        // ===== ASSIGNMENT 9 CHANGE =====
+        // .size() replaces manual size variable
+        return (int)items.size();
     }
 };

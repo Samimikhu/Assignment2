@@ -71,3 +71,46 @@ void TradeManager::printAllRecursive(int index) const {
 void TradeManager::printAllRecursive() const {
     printAllRecursive(0);
 }
+// ===== ASSIGNMENT 9 ADDITIONS =====
+// Sequential search — searches element by element from beginning
+// Returns index of first trade with matching name or -1 if not found
+int TradeManager::sequentialSearch(const string& name) const {
+    for (int i = 0; i < items.getSize(); i++) {
+        if (items[i]->getName() == name)
+            return i;  // found — return index
+    }
+    return -1;  // not found
+}
+// Bubble sort — sorts trades alphabetically by name
+// Repeatedly compares adjacent trades and swaps if out of order
+void TradeManager::bubbleSort() {
+    int n = items.getSize();
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            // compare adjacent trades by name
+            if (items[j]->getName() > items[j + 1]->getName()) {
+                // swap pointers
+                BaseTrade* temp = items[j];
+                items[j] = items[j + 1];
+                items[j + 1] = temp;
+            }
+        }
+    }
+}
+// Binary search — searches sorted vector using low/mid/high approach
+// MUST call bubbleSort() before calling this function
+// Returns index of trade with matching name or -1 if not found
+int TradeManager::binarySearch(const string& name) const {
+    int low = 0;
+    int high = items.getSize() - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;  // find middle index
+        if (items[mid]->getName() == name)
+            return mid;   // found — return index
+        else if (items[mid]->getName() < name)
+            low = mid + 1;   // search right half
+        else
+            high = mid - 1;  // search left half
+    }
+    return -1;  // not found
+}

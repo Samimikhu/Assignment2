@@ -182,7 +182,7 @@ TEST_CASE("DynamicArray remove throws on invalid index") {
     CHECK_THROWS_AS(arr.remove(99), TradeException);  // index too large
 }
 // ==========================================================
-// I) NEW ASSIGNMENT 8 RECURSION TESTS
+// I) ASSIGNMENT 8 RECURSION TESTS
 // ==========================================================
 // Tests that printAllRecursive runs without errors on empty manager
 TEST_CASE("printAllRecursive works on empty manager") {
@@ -209,9 +209,76 @@ TEST_CASE("printAllRecursive matches printAll behavior") {
     BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
     manager.addTrade(b1);
     manager.addTrade(s1);
-    // both should work on the same manager without errors
     manager.printAll();
     manager.printAllRecursive();
     CHECK(manager.getSize() == 2);
+}
+// ==========================================================
+// J) ASSIGNMENT 9 SEARCH AND SORT TESTS
+// ==========================================================
+// Sequential search — found
+TEST_CASE("sequentialSearch finds existing trade") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+    BaseTrade* b2 = new BuyTrade("GOOG", 3, Medium, 1.0, 50.0);
+    manager.addTrade(b1);
+    manager.addTrade(s1);
+    manager.addTrade(b2);
+    CHECK(manager.sequentialSearch("TSLA") == 1);  // TSLA is at index 1
+    CHECK(manager.sequentialSearch("AAPL") == 0);  // AAPL is at index 0
+}
+// Sequential search — not found
+TEST_CASE("sequentialSearch returns -1 when not found") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.addTrade(b1);
+    CHECK(manager.sequentialSearch("MSFT") == -1);  // MSFT not in manager
+}
+// Sequential search — empty manager
+TEST_CASE("sequentialSearch returns -1 on empty manager") {
+    TradeManager manager;
+    CHECK(manager.sequentialSearch("AAPL") == -1);  // nothing to search
+}
+// Bubble sort — sorts alphabetically
+TEST_CASE("bubbleSort sorts trades alphabetically") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("TSLA", 10, Low, 2.0, 100.0);
+    BaseTrade* b2 = new BuyTrade("AAPL", 5, High, 1.0, 50.0);
+    BaseTrade* b3 = new BuyTrade("GOOG", 3, Medium, 1.0, 75.0);
+    manager.addTrade(b1);
+    manager.addTrade(b2);
+    manager.addTrade(b3);
+    manager.bubbleSort();
+    CHECK(manager[0]->getName() == "AAPL");  // A comes first
+    CHECK(manager[1]->getName() == "GOOG");  // G comes second
+    CHECK(manager[2]->getName() == "TSLA");  // T comes last
+}
+// Binary search — found after sort
+TEST_CASE("binarySearch finds trade after sort") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("TSLA", 10, Low, 2.0, 100.0);
+    BaseTrade* b2 = new BuyTrade("AAPL", 5, High, 1.0, 50.0);
+    BaseTrade* b3 = new BuyTrade("GOOG", 3, Medium, 1.0, 75.0);
+    manager.addTrade(b1);
+    manager.addTrade(b2);
+    manager.addTrade(b3);
+    manager.bubbleSort();  // must sort before binary search
+    CHECK(manager.binarySearch("AAPL") != -1);  // AAPL should be found
+    CHECK(manager.binarySearch("GOOG") != -1);  // GOOG should be found
+    CHECK(manager.binarySearch("TSLA") != -1);  // TSLA should be found
+}
+// Binary search — not found
+TEST_CASE("binarySearch returns -1 when not found") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.addTrade(b1);
+    manager.bubbleSort();
+    CHECK(manager.binarySearch("MSFT") == -1);  // MSFT not in manager
+}
+// Binary search — empty manager
+TEST_CASE("binarySearch returns -1 on empty manager") {
+    TradeManager manager;
+    CHECK(manager.binarySearch("AAPL") == -1);  // nothing to search
 }
 #endif
