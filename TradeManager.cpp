@@ -114,3 +114,39 @@ int TradeManager::binarySearch(const string& name) const {
     }
     return -1;  // not found
 }
+// ===== ASSIGNMENT 10 ADDITIONS =====
+// Insert trade at front of linked list
+void TradeManager::insertFront(BaseTrade* trade) {
+    tradeList.insertFront(trade);
+}
+// Insert trade at back of linked list
+void TradeManager::insertBack(BaseTrade* trade) {
+    tradeList.insertBack(trade);
+}
+// Delete trade from linked list by name
+bool TradeManager::deleteFromList(const string& name) {
+    return tradeList.deleteNode(name);
+}
+// Search linked list by name
+BaseTrade* TradeManager::searchList(const string& name) const {
+    return tradeList.search(name);
+}
+// Print linked list using iterator
+// ===== ASSIGNMENT 10 ADDITION =====
+// Uses TradeListIterator to traverse the linked list
+void TradeManager::printList() const {
+    cout << "\n--- Linked List Trades ---\n";
+    TradeListIterator it(tradeList);  // initialize iterator to front of list
+    if (!it.hasNext()) {
+        cout << "No trades in linked list.\n";
+        return;
+    }
+    while (it.hasNext()) {           // keep going while there are more nodes
+        it.getData()->print();       // print current node's trade
+        it.next();                   // advance to next node
+    }
+}
+// Returns size of linked list
+int TradeManager::getListSize() const {
+    return tradeList.getSize();
+}

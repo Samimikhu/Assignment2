@@ -12,6 +12,9 @@ private:
     // ===== ASSIGNMENT 8 ADDITION =====
     // Private helper for recursive print
     void printAllRecursive(int index) const;
+    // ===== ASSIGNMENT 10 ADDITION =====
+    // Linked list that mirrors trades for linked list operations
+    TradeLinkedList tradeList;
 public:
     TradeManager(int cap = 5);        // default capacity
     ~TradeManager();
@@ -33,4 +36,17 @@ public:
     void bubbleSort();
     // Binary search — must call bubbleSort() first, returns index or -1
     int binarySearch(const string& name) const;
+    // ===== ASSIGNMENT 10 ADDITIONS =====
+    // Insert trade at front of linked list
+    void insertFront(BaseTrade* trade);
+    // Insert trade at back of linked list
+    void insertBack(BaseTrade* trade);
+    // Delete trade from linked list by name
+    bool deleteFromList(const string& name);
+    // Search linked list by name
+    BaseTrade* searchList(const string& name) const;
+    // Print linked list using iterator
+    void printList() const;
+    // Returns size of linked list
+    int getListSize() const;
 };

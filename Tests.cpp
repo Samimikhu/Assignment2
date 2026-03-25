@@ -281,4 +281,94 @@ TEST_CASE("binarySearch returns -1 on empty manager") {
     TradeManager manager;
     CHECK(manager.binarySearch("AAPL") == -1);  // nothing to search
 }
+// ==========================================================
+// K) ASSIGNMENT 10 LINKED LIST TESTS
+// ==========================================================
+// Insert at front — empty list
+TEST_CASE("insertFront into empty list") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.insertFront(b1);
+    CHECK(manager.getListSize() == 1);
+    CHECK(manager.searchList("AAPL") != nullptr);  // should be found
+}
+// Insert at back — empty list
+TEST_CASE("insertBack into empty list") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.insertBack(b1);
+    CHECK(manager.getListSize() == 1);
+    CHECK(manager.searchList("AAPL") != nullptr);  // should be found
+}
+// Insert at front and back — verify order
+TEST_CASE("insertFront and insertBack maintain correct order") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* b2 = new BuyTrade("TSLA", 5, High, 1.0, 50.0);
+    BaseTrade* b3 = new BuyTrade("GOOG", 3, Medium, 1.0, 75.0);
+    manager.insertBack(b1);   // AAPL at back
+    manager.insertBack(b2);   // TSLA at back
+    manager.insertFront(b3);  // GOOG at front
+    CHECK(manager.getListSize() == 3);
+}
+// Delete — existing node
+TEST_CASE("deleteFromList removes existing trade") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* b2 = new BuyTrade("TSLA", 5, High, 1.0, 50.0);
+    manager.insertBack(b1);
+    manager.insertBack(b2);
+    bool result = manager.deleteFromList("AAPL");
+    CHECK(result == true);               // deletion should succeed
+    CHECK(manager.getListSize() == 1);   // size should decrease
+    CHECK(manager.searchList("AAPL") == nullptr);  // should no longer be found
+}
+// Delete — node that does not exist
+TEST_CASE("deleteFromList returns false when not found") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.insertBack(b1);
+    bool result = manager.deleteFromList("MSFT");  // MSFT never added
+    CHECK(result == false);              // deletion should fail
+    CHECK(manager.getListSize() == 1);  // size should not change
+}
+// Delete — empty list
+TEST_CASE("deleteFromList returns false on empty list") {
+    TradeManager manager;
+    bool result = manager.deleteFromList("AAPL");
+    CHECK(result == false);             // nothing to delete
+    CHECK(manager.getListSize() == 0);  // size stays 0
+}
+// Search — found
+TEST_CASE("searchList finds existing trade") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.insertBack(b1);
+    BaseTrade* result = manager.searchList("AAPL");
+    CHECK(result != nullptr);           // should be found
+    CHECK(result->getName() == "AAPL"); // should return correct trade
+}
+// Search — not found
+TEST_CASE("searchList returns nullptr when not found") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    manager.insertBack(b1);
+    CHECK(manager.searchList("MSFT") == nullptr);  // MSFT never added
+}
+// Traverse — empty list
+TEST_CASE("printList traverses empty list without crashing") {
+    TradeManager manager;
+    manager.printList();  // should not crash
+    CHECK(manager.getListSize() == 0);
+}
+// Traverse — multiple trades using iterator
+TEST_CASE("printList traverses all trades using iterator") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+    manager.insertBack(b1);
+    manager.insertBack(s1);
+    manager.printList();  // uses iterator internally
+    CHECK(manager.getListSize() == 2);  // both trades still in list
+}
 #endif

@@ -12,6 +12,9 @@ Assignment 6:
 
 Assignment 7:
 - Added try/catch blocks to handle exceptions from operators
+
+Assignment 10:
+- Added linked list menu options
 ==========================================================
 */
 
@@ -106,6 +109,10 @@ void StockApp::addBuyTrade() {
     //// ===== ASSIGNMENT 6 CHANGE =====
     manager += trade;
 
+    //// ===== ASSIGNMENT 10 ADDITION =====
+    // Also insert into linked list at back
+    manager.insertBack(trade);
+
     cout << "Buy trade added successfully.\n";
 
     //// ===== ASSIGNMENT 6 TEMPLATE USAGE =====
@@ -185,6 +192,10 @@ void StockApp::addSellTrade() {
     //// ===== ASSIGNMENT 6 CHANGE =====
     manager += trade;
 
+    //// ===== ASSIGNMENT 10 ADDITION =====
+    // Also insert into linked list at back
+    manager.insertBack(trade);
+
     cout << "Sell trade added successfully.\n";
 
     //// ===== ASSIGNMENT 6 TEMPLATE USAGE =====
@@ -249,6 +260,12 @@ void StockApp::displaySummary() {
     }
 }
 
+// ===== ASSIGNMENT 10 ADDITION =====
+// Displays linked list using iterator
+void StockApp::displayLinkedList() {
+    manager.printList();
+}
+
 void StockApp::showMenu()
 {
     int choice;
@@ -259,7 +276,9 @@ void StockApp::showMenu()
         cout << "2. Add Sell Trade\n";
         cout << "3. Remove Trade\n";
         cout << "4. View Summary\n";
-        cout << "5. Exit\n";
+        // ===== ASSIGNMENT 10 ADDITION =====
+        cout << "5. View Linked List\n";
+        cout << "6. Exit\n";
         cout << "Enter choice: ";
 
         if (!(cin >> choice)) {
@@ -282,12 +301,16 @@ void StockApp::showMenu()
         case 4:
             displaySummary();
             break;
+            // ===== ASSIGNMENT 10 ADDITION =====
         case 5:
+            displayLinkedList();
+            break;
+        case 6:
             cout << "Exiting program.\n";
             break;
         default:
-            cout << "Invalid choice. Please select 1-5.\n";
+            cout << "Invalid choice. Please select 1-6.\n";
         }
 
-    } while (choice != 5);
+    } while (choice != 6);
 }
