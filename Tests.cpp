@@ -384,7 +384,7 @@ TEST_CASE("TradeStack push and pop") {
     CHECK(stack.getStackSize() == 2);
 
     stack.pop();  
-    CHECK(stack.front() == b1); // as s1 was last in, it has been removed
+    CHECK(stack.frontTrade() == b1); // as s1 was last in, it has been removed
     CHECK(stack.getStackSize() == 1);
     stack.pop();
     CHECK(stack.getStackSize() == 0);
@@ -402,7 +402,7 @@ TEST_CASE("TradeQueue enqueue and dequeue") {
 
     queue.dequeueTrade(); // should remove b1 first as FIFO
     CHECK(queue.frontTrade() == s1);
-    CHECK(queue.getSize() == 1);
+    CHECK(queue.getQueueSize() == 1);
     
     queue.dequeueTrade();
     CHECK(queue.getQueueSize() == 0);
