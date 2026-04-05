@@ -203,6 +203,7 @@ class TradeQueue {
                 rear->next = newNode;
                 rear = rear->next;
             }
+            size++;
         }
 
         // CHeck if the queue is empty
