@@ -79,36 +79,199 @@ public:
 struct TradeNode {
     BaseTrade* data;      // the trade stored in this node
     TradeNode* next;      // pointer to the next node in the list
-    // Constructor — initializes data and sets next to nullptr
+    // Constructor ï¿½ initializes data and sets next to nullptr
     TradeNode(BaseTrade* trade) : data(trade), next(nullptr) {}
 };
+
+// ===== ASSIGNMENT 11 ADDITION =====
+// Stack and Queue classes using TradeNode
+
+class TradeStack {
+    private:
+        TradeNode* stackTop; // pointer to the top of the stack
+        int size; // number of elements in the stack
+    
+    public:
+        // Constructor for TradeStack
+        TradeStack(){
+            stackTop = nullptr;
+            size = 0;
+        }
+        // Intializes the stack
+        void initializeTradeStack() {
+            TradeNode* temp;
+            while(stackTop != nullptr){
+                temp = stackTop;
+                stackTop = stackTop->next;
+                delete temp; 
+            }
+
+        }
+        // Destructor for TradeStack
+        ~TradeStack() {
+            initializeTradeStack();
+        }
+
+        // Pushes a trade onto the stack
+        void push(BaseTrade* trade){
+            TradeNode* newNode = new TradeNode(trade);
+
+            newNode->next = stackTop;
+            stackTop = newNode;
+            
+            size++;
+        }
+
+        // Pops a trade from the stack
+        void pop() {
+            TradeNode* temp;
+
+            if (stackTop != nullptr){
+                temp = stackTop;
+                stackTop = stackTop->next;
+                delete temp;
+                size--;
+            }
+            else {
+                cout << "Cannot remove from an empty stack." << endl;
+            }
+        }
+
+        // Return the top trade on the stack
+        BaseTrade* top() const {
+            if (stackTop != nullptr){
+                return stackTop->data;
+            }
+            else{
+                cout << "Stack is empty." << endl;
+                return nullptr;
+            }
+        }
+
+        // Check if the stack is empty
+        bool isEmptyTradeStack() const {
+            return stackTop == nullptr;
+        }
+        // Returns the size of the stack
+        int getStackSize() const {
+            return size;
+        }
+};
+
+// First in, first out
+class TradeQueue {
+    private:
+        TradeNode* front; // front of the queue
+        TradeNode* rear; // rear/back of the queue
+        int size; // number of elements in the queue
+    
+    public:
+        // Constructor for TradeQueue
+        TradeQueue() {
+            front = nullptr;
+            rear = nullptr;
+            size = 0;
+        }
+
+        // Initializes the queue
+        void initializeTradeQueue() {
+            TradeNode* temp;
+            while (front != nullptr){
+                temp = front;
+                front = front->next;
+                delete temp;
+            }
+            rear = nullptr; // making sure rear is also nullptr
+            size = 0;
+        }
+
+        // Destructor for TradeQueue
+        ~TradeQueue() {
+            initializeTradeQueue();
+        }
+
+        // Enqueues a trade to the rear of the queue
+        void enqueueTrade(BaseTrade* trade){
+            TradeNode* newNode;
+            newNode = new TradeNode(trade);
+            newNode->next = nullptr;
+            
+            if (front == nullptr){
+                front = newNode;
+                rear = newNode;
+            } else{
+                rear->next = newNode;
+                rear = rear->next;
+            }
+        }
+
+        // CHeck if the queue is empty
+        bool isEmptyTradeQueue() const {
+            return front == nullptr;
+        }
+
+        // Dequeues a trade from the front of the queue
+        void dequeueTrade() {
+            TradeNode* temp;
+
+            if(!isEmptyTradeQueue()){
+                temp = front;
+
+                front = front->next;
+
+                delete temp;
+
+                size--;
+
+                if (front == nullptr){ // if the queue becomes empty after dequeueing
+                    rear = nullptr; 
+                }
+            }
+        }
+        // Returns the size of the queue
+        int getQueueSize() const {
+            return size;
+        }
+
+        // Returns the front of the trade queue
+
+        BaseTrade* frontTrade() const {
+            if (!isEmptyTradeQueue()){
+                return front->data;
+            } else {
+                cout << "Queue is empty." << endl;
+                return nullptr;
+            }
+        }
+};
+
 
 // ===== ASSIGNMENT 10 ADDITION =====
 // Unordered linked list of trades
 // Insertions can be at the front or back
-// This is an unordered list — trades are stored in insertion order
+// This is an unordered list ï¿½ trades are stored in insertion order
 class TradeLinkedList {
 private:
     TradeNode* head;  // pointer to first node
     TradeNode* tail;  // pointer to last node
     int size;         // number of nodes in the list
 public:
-    // Constructor — initializes empty list
+    // Constructor ï¿½ initializes empty list
     TradeLinkedList() : head(nullptr), tail(nullptr), size(0) {}
-    // Destructor — deletes all nodes to prevent memory leaks
+    // Destructor ï¿½ deletes all nodes to prevent memory leaks
     ~TradeLinkedList() {
         TradeNode* current = head;
         while (current != nullptr) {
             TradeNode* next = current->next;
-            delete current;  // delete the node (not the trade — TradeManager owns trades)
+            delete current;  // delete the node (not the trade ï¿½ TradeManager owns trades)
             current = next;
         }
     }
-    // Insert at front — adds new node at the beginning of the list
+    // Insert at front ï¿½ adds new node at the beginning of the list
     void insertFront(BaseTrade* trade) {
         TradeNode* newNode = new TradeNode(trade);
         if (head == nullptr) {
-            // list is empty — new node is both head and tail
+            // list is empty ï¿½ new node is both head and tail
             head = newNode;
             tail = newNode;
         }
@@ -119,11 +282,11 @@ public:
         }
         size++;
     }
-    // Insert at back — adds new node at the end of the list
+    // Insert at back ï¿½ adds new node at the end of the list
     void insertBack(BaseTrade* trade) {
         TradeNode* newNode = new TradeNode(trade);
         if (tail == nullptr) {
-            // list is empty — new node is both head and tail
+            // list is empty ï¿½ new node is both head and tail
             head = newNode;
             tail = newNode;
         }
@@ -134,11 +297,11 @@ public:
         }
         size++;
     }
-    // Delete — removes node with matching trade name
+    // Delete ï¿½ removes node with matching trade name
     // Returns true if found and deleted, false if not found
     bool deleteNode(const string& name) {
         if (head == nullptr)
-            return false;  // empty list — nothing to delete
+            return false;  // empty list ï¿½ nothing to delete
         // check if head node matches
         if (head->data->getName() == name) {
             TradeNode* temp = head;
@@ -165,18 +328,18 @@ public:
         }
         return false;  // not found
     }
-    // Search — finds node with matching trade name
+    // Search ï¿½ finds node with matching trade name
     // Returns pointer to trade if found, nullptr if not found
     BaseTrade* search(const string& name) const {
         TradeNode* current = head;
         while (current != nullptr) {
             if (current->data->getName() == name)
-                return current->data;  // found — return trade pointer
+                return current->data;  // found ï¿½ return trade pointer
             current = current->next;
         }
         return nullptr;  // not found
     }
-    // Print/Traverse — visits and displays every node in the list
+    // Print/Traverse ï¿½ visits and displays every node in the list
     void print() const {
         TradeNode* current = head;
         if (current == nullptr) {
@@ -190,7 +353,7 @@ public:
     }
     // Returns number of nodes in the list
     int getSize() const { return size; }
-    // Returns head pointer — used by iterator
+    // Returns head pointer ï¿½ used by iterator
     TradeNode* getHead() const { return head; }
 };
 
@@ -201,7 +364,7 @@ class TradeListIterator {
 private:
     TradeNode* current;  // pointer to current node
 public:
-    // Constructor — initializes iterator to front of list
+    // Constructor ï¿½ initializes iterator to front of list
     TradeListIterator(const TradeLinkedList& list) : current(list.getHead()) {}
     // Returns true if there are more nodes to visit
     bool hasNext() const { return current != nullptr; }
