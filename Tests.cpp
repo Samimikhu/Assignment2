@@ -384,7 +384,7 @@ TEST_CASE("TradeStack push and pop") {
     CHECK(stack.getStackSize() == 2);
 
     stack.pop();  
-    CHECK(stack.frontTrade() == b1); // as s1 was last in, it has been removed
+    CHECK(stack.top() == b1); // as s1 was last in, it has been removed
     CHECK(stack.getStackSize() == 1);
     stack.pop();
     CHECK(stack.getStackSize() == 0);
