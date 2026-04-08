@@ -371,4 +371,42 @@ TEST_CASE("printList traverses all trades using iterator") {
     manager.printList();  // uses iterator internally
     CHECK(manager.getListSize() == 2);  // both trades still in list
 }
+
+// Tests for TradeStack and TradeQueue
+TEST_CASE("TradeStack push and pop") {
+    TradeStack stack;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+
+    stack.push(b1);
+    stack.push(s1);
+
+    CHECK(stack.getStackSize() == 2);
+
+    stack.pop();  
+    CHECK(stack.top() == b1); // as s1 was last in, it has been removed
+    CHECK(stack.getStackSize() == 1);
+    stack.pop();
+    CHECK(stack.getStackSize() == 0);
+    CHECK(stack.isEmptyTradeStack() == true);
+}
+
+TEST_CASE("TradeQueue enqueue and dequeue") {
+    TradeQueue queue;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+    
+    queue.enqueueTrade(b1);
+    queue.enqueueTrade(s1);
+    CHECK(queue.getQueueSize() == 2);
+
+    queue.dequeueTrade(); // should remove b1 first as FIFO
+    CHECK(queue.frontTrade() == s1);
+    CHECK(queue.getQueueSize() == 1);
+    
+    queue.dequeueTrade();
+    CHECK(queue.getQueueSize() == 0);
+    CHECK(queue.isEmptyTradeQueue() == true);
+}
+
 #endif
