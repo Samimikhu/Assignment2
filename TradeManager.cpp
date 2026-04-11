@@ -146,7 +146,75 @@ void TradeManager::printList() const {
         it.next();                   // advance to next node
     }
 }
+
 // Returns size of linked list
 int TradeManager::getListSize() const {
     return tradeList.getSize();
+}
+
+// ===== ASSIGNMENT 12 ADDITIONS =====
+// Map operations for fast symbol-based trade lookup
+
+// Insert — add trade to map by symbol
+// Map automatically handles duplicates by replacing existing value
+void TradeManager::insertIntoMap(BaseTrade* trade) {
+    if (trade == nullptr) {
+        cout << "Error: Cannot insert null trade into map.\n";
+        return;
+    }
+
+    string symbol = trade->getName();
+
+    // Check if symbol already exists in map
+    if (tradeMap.find(symbol) != tradeMap.end()) {
+        cout << "Warning: Symbol " << symbol << " already exists in map. Replacing with new trade.\n";
+    }
+
+    // Insert/update trade in map
+    tradeMap[symbol] = trade;
+}
+
+// Lookup — retrieve trade by symbol (O(log n) vs O(n) sequential search)
+BaseTrade* TradeManager::lookupBySymbol(const string& symbol) const {
+    // Use find() to search map
+    auto it = tradeMap.find(symbol);
+
+    // If found, return trade pointer
+    if (it != tradeMap.end()) {
+        return it->second;
+    }
+
+    // Not found - return nullptr
+    return nullptr;
+}
+
+// Delete — remove trade from map by symbol
+bool TradeManager::deleteFromMap(const string& symbol) {
+    // Use erase() which returns number of elements removed
+    // Returns 1 if found and removed, 0 if not found
+    return tradeMap.erase(symbol) > 0;
+}
+
+// Iterate — traverse and display all trades in map (alphabetically by symbol)
+void TradeManager::printMap() const {
+    cout << "\n--- Trade Map (by Symbol) ---\n";
+
+    if (tradeMap.empty()) {
+        cout << "No trades in map.\n";
+        return;
+    }
+
+    // Map automatically maintains sorted order by key (symbol)
+    // Use iterator to traverse all key-value pairs
+    for (auto it = tradeMap.begin(); it != tradeMap.end(); ++it) {
+        cout << "Symbol: " << it->first << " -> ";
+        it->second->print();
+    }
+
+    cout << "Total unique symbols: " << tradeMap.size() << endl;
+}
+
+// Returns number of unique symbols in map
+int TradeManager::getMapSize() const {
+    return static_cast<int>(tradeMap.size());
 }
