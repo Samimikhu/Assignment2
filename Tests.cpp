@@ -372,6 +372,10 @@ TEST_CASE("printList traverses all trades using iterator") {
     CHECK(manager.getListSize() == 2);  // both trades still in list
 }
 
+// ==========================================================
+// K) ASSIGNMENT 11 STACKS AND QUEUES TESTS
+// ==========================================================
+
 // Tests for TradeStack and TradeQueue
 TEST_CASE("TradeStack push and pop") {
     TradeStack stack;
