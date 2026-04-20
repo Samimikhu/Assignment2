@@ -15,6 +15,9 @@ Assignment 7:
 
 Assignment 10:
 - Added linked list menu options
+
+Assignment 12:
+- Added STL map menu options for fast symbol lookup
 ==========================================================
 */
 
@@ -113,6 +116,10 @@ void StockApp::addBuyTrade() {
     // Also insert into linked list at back
     manager.insertBack(trade);
 
+    //// ===== ASSIGNMENT 12 ADDITION =====
+    // Also insert into map for fast symbol lookup
+    manager.insertIntoMap(trade);
+
     cout << "Buy trade added successfully.\n";
 
     //// ===== ASSIGNMENT 6 TEMPLATE USAGE =====
@@ -196,6 +203,10 @@ void StockApp::addSellTrade() {
     // Also insert into linked list at back
     manager.insertBack(trade);
 
+    //// ===== ASSIGNMENT 12 ADDITION =====
+    // Also insert into map for fast symbol lookup
+    manager.insertIntoMap(trade);
+
     cout << "Sell trade added successfully.\n";
 
     //// ===== ASSIGNMENT 6 TEMPLATE USAGE =====
@@ -266,6 +277,59 @@ void StockApp::displayLinkedList() {
     manager.printList();
 }
 
+// ===== ASSIGNMENT 12 ADDITIONS =====
+// Lookup trade by symbol using map
+void StockApp::lookupTradeBySymbol() {
+    string symbol;
+
+    cin.ignore(10000, '\n');
+    cout << "Enter stock symbol to lookup: ";
+    getline(cin, symbol);
+
+    if (symbol.empty()) {
+        cout << "Invalid symbol.\n";
+        return;
+    }
+
+    BaseTrade* trade = manager.lookupBySymbol(symbol);
+
+    if (trade != nullptr) {
+        cout << "\nTrade found:\n";
+        trade->print();
+    }
+    else {
+        cout << "No trade found for symbol: " << symbol << endl;
+    }
+}
+
+// Delete trade from map by symbol
+void StockApp::deleteTradeFromMap() {
+    string symbol;
+
+    cin.ignore(10000, '\n');
+    cout << "Enter stock symbol to delete from map: ";
+    getline(cin, symbol);
+
+    if (symbol.empty()) {
+        cout << "Invalid symbol.\n";
+        return;
+    }
+
+    bool success = manager.deleteFromMap(symbol);
+
+    if (success) {
+        cout << "Trade with symbol " << symbol << " removed from map.\n";
+    }
+    else {
+        cout << "No trade found with symbol: " << symbol << endl;
+    }
+}
+
+// Display all trades in map (sorted by symbol)
+void StockApp::displayTradeMap() {
+    manager.printMap();
+}
+
 void StockApp::showMenu()
 {
     int choice;
@@ -278,7 +342,11 @@ void StockApp::showMenu()
         cout << "4. View Summary\n";
         // ===== ASSIGNMENT 10 ADDITION =====
         cout << "5. View Linked List\n";
-        cout << "6. Exit\n";
+        // ===== ASSIGNMENT 12 ADDITIONS =====
+        cout << "6. Lookup Trade by Symbol (Map)\n";
+        cout << "7. Delete Trade from Map\n";
+        cout << "8. View Trade Map\n";
+        cout << "9. Exit\n";
         cout << "Enter choice: ";
 
         if (!(cin >> choice)) {
@@ -305,12 +373,22 @@ void StockApp::showMenu()
         case 5:
             displayLinkedList();
             break;
+            // ===== ASSIGNMENT 12 ADDITIONS =====
         case 6:
+            lookupTradeBySymbol();
+            break;
+        case 7:
+            deleteTradeFromMap();
+            break;
+        case 8:
+            displayTradeMap();
+            break;
+        case 9:
             cout << "Exiting program.\n";
             break;
         default:
-            cout << "Invalid choice. Please select 1-6.\n";
+            cout << "Invalid choice. Please select 1-9.\n";
         }
 
-    } while (choice != 6);
+    } while (choice != 9);
 }

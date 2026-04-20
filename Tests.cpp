@@ -387,7 +387,7 @@ TEST_CASE("TradeStack push and pop") {
 
     CHECK(stack.getStackSize() == 2);
 
-    stack.pop();  
+    stack.pop();
     CHECK(stack.top() == b1); // as s1 was last in, it has been removed
     CHECK(stack.getStackSize() == 1);
     stack.pop();
@@ -399,7 +399,7 @@ TEST_CASE("TradeQueue enqueue and dequeue") {
     TradeQueue queue;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
     BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
-    
+
     queue.enqueueTrade(b1);
     queue.enqueueTrade(s1);
     CHECK(queue.getQueueSize() == 2);
@@ -407,10 +407,174 @@ TEST_CASE("TradeQueue enqueue and dequeue") {
     queue.dequeueTrade(); // should remove b1 first as FIFO
     CHECK(queue.frontTrade() == s1);
     CHECK(queue.getQueueSize() == 1);
-    
+
     queue.dequeueTrade();
     CHECK(queue.getQueueSize() == 0);
     CHECK(queue.isEmptyTradeQueue() == true);
+}
+
+// ==========================================================
+// L) ASSIGNMENT 12 STL MAP TESTS
+// ==========================================================
+
+// Insert — single trade
+TEST_CASE("insertIntoMap adds single trade") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+
+    manager.insertIntoMap(b1);
+
+    CHECK(manager.getMapSize() == 1);
+    CHECK(manager.lookupBySymbol("AAPL") == b1);
+}
+
+// Insert — multiple trades
+TEST_CASE("insertIntoMap adds multiple trades") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+    BaseTrade* b2 = new BuyTrade("GOOG", 3, Medium, 1.0, 50.0);
+
+    manager.insertIntoMap(b1);
+    manager.insertIntoMap(s1);
+    manager.insertIntoMap(b2);
+
+    CHECK(manager.getMapSize() == 3);
+}
+
+// Insert — duplicate symbol (should replace)
+TEST_CASE("insertIntoMap replaces trade with duplicate symbol") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* b2 = new BuyTrade("AAPL", 20, High, 3.0, 150.0);
+
+    manager.insertIntoMap(b1);
+    manager.insertIntoMap(b2);
+
+    CHECK(manager.getMapSize() == 1);       // still only 1 entry
+    CHECK(manager.lookupBySymbol("AAPL") == b2);  // b2 replaced b1
+}
+
+// Insert — nullptr (edge case)
+TEST_CASE("insertIntoMap handles nullptr gracefully") {
+    TradeManager manager;
+
+    manager.insertIntoMap(nullptr);  // should not crash
+
+    CHECK(manager.getMapSize() == 0);
+}
+
+// Lookup — existing symbol
+TEST_CASE("lookupBySymbol finds existing trade") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+
+    manager.insertIntoMap(b1);
+    manager.insertIntoMap(s1);
+
+    CHECK(manager.lookupBySymbol("AAPL") == b1);
+    CHECK(manager.lookupBySymbol("TSLA") == s1);
+}
+
+// Lookup — non-existent symbol
+TEST_CASE("lookupBySymbol returns nullptr for non-existent symbol") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+
+    manager.insertIntoMap(b1);
+
+    CHECK(manager.lookupBySymbol("MSFT") == nullptr);
+}
+
+// Lookup — empty map
+TEST_CASE("lookupBySymbol returns nullptr on empty map") {
+    TradeManager manager;
+
+    CHECK(manager.lookupBySymbol("AAPL") == nullptr);
+}
+
+// Delete — existing symbol
+TEST_CASE("deleteFromMap removes existing trade") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
+
+    manager.insertIntoMap(b1);
+    manager.insertIntoMap(s1);
+
+    bool result = manager.deleteFromMap("AAPL");
+
+    CHECK(result == true);              // deletion should succeed
+    CHECK(manager.getMapSize() == 1);   // size should decrease
+    CHECK(manager.lookupBySymbol("AAPL") == nullptr);  // should no longer be found
+}
+
+// Delete — non-existent symbol
+TEST_CASE("deleteFromMap returns false for non-existent symbol") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
+
+    manager.insertIntoMap(b1);
+
+    bool result = manager.deleteFromMap("MSFT");
+
+    CHECK(result == false);             // deletion should fail
+    CHECK(manager.getMapSize() == 1);   // size should not change
+}
+
+// Delete — empty map
+TEST_CASE("deleteFromMap returns false on empty map") {
+    TradeManager manager;
+
+    bool result = manager.deleteFromMap("AAPL");
+
+    CHECK(result == false);             // nothing to delete
+    CHECK(manager.getMapSize() == 0);   // size stays 0
+}
+
+// Iterate — empty map
+TEST_CASE("printMap handles empty map gracefully") {
+    TradeManager manager;
+
+    manager.printMap();  // should not crash
+
+    CHECK(manager.getMapSize() == 0);
+}
+
+// Iterate — multiple trades (should be sorted by symbol)
+TEST_CASE("printMap displays trades sorted by symbol") {
+    TradeManager manager;
+    BaseTrade* b1 = new BuyTrade("TSLA", 10, Low, 2.0, 100.0);
+    BaseTrade* s1 = new SellTrade("AAPL", 5, High, 10.0, 200.0);
+    BaseTrade* b2 = new BuyTrade("GOOG", 3, Medium, 1.0, 50.0);
+
+    manager.insertIntoMap(b1);
+    manager.insertIntoMap(s1);
+    manager.insertIntoMap(b2);
+
+    manager.printMap();  // should display in alphabetical order: AAPL, GOOG, TSLA
+
+    CHECK(manager.getMapSize() == 3);
+}
+
+// Performance comparison — map vs sequential search
+TEST_CASE("lookupBySymbol is faster than sequentialSearch") {
+    TradeManager manager;
+
+    // Add many trades to make difference more apparent
+    for (int i = 0; i < 100; i++) {
+        BaseTrade* trade = new BuyTrade("SYM" + std::to_string(i), 10, Low, 1.0, 100.0);
+        manager.addTrade(trade);
+        manager.insertIntoMap(trade);
+    }
+
+    // Both should find the trade
+    CHECK(manager.lookupBySymbol("SYM50") != nullptr);
+    CHECK(manager.sequentialSearch("SYM50") != -1);
+
+    // Map lookup is O(log n), sequential is O(n)
+    // For large datasets, map would be significantly faster
 }
 
 #endif
