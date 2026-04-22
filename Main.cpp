@@ -1,3 +1,6 @@
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#define _HAS_STD_BYTE 0
 #include "StockApp.h"
 #include <iostream>
 
