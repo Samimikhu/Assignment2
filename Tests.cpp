@@ -10,6 +10,8 @@ Unit tests using doctest framework.
 #include "TradeManager.h"
 #include "TradeCost.h"
 #include "DynamicArray.h"
+#include "StockApp.h"
+#include "json.hpp"
 #include <sstream>
 // ==========================================================
 // A) CONSTRUCTOR TESTS
@@ -371,12 +373,9 @@ TEST_CASE("printList traverses all trades using iterator") {
     manager.printList();  // uses iterator internally
     CHECK(manager.getListSize() == 2);  // both trades still in list
 }
-
 // ==========================================================
 // K) ASSIGNMENT 11 STACKS AND QUEUES TESTS
 // ==========================================================
-
-// Tests for TradeStack and TradeQueue
 TEST_CASE("TradeStack push and pop") {
     TradeStack stack;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
@@ -388,7 +387,7 @@ TEST_CASE("TradeStack push and pop") {
     CHECK(stack.getStackSize() == 2);
 
     stack.pop();
-    CHECK(stack.top() == b1); // as s1 was last in, it has been removed
+    CHECK(stack.top() == b1);
     CHECK(stack.getStackSize() == 1);
     stack.pop();
     CHECK(stack.getStackSize() == 0);
@@ -404,7 +403,7 @@ TEST_CASE("TradeQueue enqueue and dequeue") {
     queue.enqueueTrade(s1);
     CHECK(queue.getQueueSize() == 2);
 
-    queue.dequeueTrade(); // should remove b1 first as FIFO
+    queue.dequeueTrade();
     CHECK(queue.frontTrade() == s1);
     CHECK(queue.getQueueSize() == 1);
 
@@ -412,169 +411,230 @@ TEST_CASE("TradeQueue enqueue and dequeue") {
     CHECK(queue.getQueueSize() == 0);
     CHECK(queue.isEmptyTradeQueue() == true);
 }
-
 // ==========================================================
 // L) ASSIGNMENT 12 STL MAP TESTS
 // ==========================================================
-
-// Insert — single trade
 TEST_CASE("insertIntoMap adds single trade") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
-
     manager.insertIntoMap(b1);
-
     CHECK(manager.getMapSize() == 1);
     CHECK(manager.lookupBySymbol("AAPL") == b1);
 }
-
-// Insert — multiple trades
 TEST_CASE("insertIntoMap adds multiple trades") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
     BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
     BaseTrade* b2 = new BuyTrade("GOOG", 3, Medium, 1.0, 50.0);
-
     manager.insertIntoMap(b1);
     manager.insertIntoMap(s1);
     manager.insertIntoMap(b2);
-
     CHECK(manager.getMapSize() == 3);
 }
-
-// Insert — duplicate symbol (should replace)
 TEST_CASE("insertIntoMap replaces trade with duplicate symbol") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
     BaseTrade* b2 = new BuyTrade("AAPL", 20, High, 3.0, 150.0);
-
     manager.insertIntoMap(b1);
     manager.insertIntoMap(b2);
-
-    CHECK(manager.getMapSize() == 1);       // still only 1 entry
-    CHECK(manager.lookupBySymbol("AAPL") == b2);  // b2 replaced b1
+    CHECK(manager.getMapSize() == 1);
+    CHECK(manager.lookupBySymbol("AAPL") == b2);
 }
-
-// Insert — nullptr (edge case)
 TEST_CASE("insertIntoMap handles nullptr gracefully") {
     TradeManager manager;
-
-    manager.insertIntoMap(nullptr);  // should not crash
-
+    manager.insertIntoMap(nullptr);
     CHECK(manager.getMapSize() == 0);
 }
-
-// Lookup — existing symbol
 TEST_CASE("lookupBySymbol finds existing trade") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
     BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
-
     manager.insertIntoMap(b1);
     manager.insertIntoMap(s1);
-
     CHECK(manager.lookupBySymbol("AAPL") == b1);
     CHECK(manager.lookupBySymbol("TSLA") == s1);
 }
-
-// Lookup — non-existent symbol
 TEST_CASE("lookupBySymbol returns nullptr for non-existent symbol") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
-
     manager.insertIntoMap(b1);
-
     CHECK(manager.lookupBySymbol("MSFT") == nullptr);
 }
-
-// Lookup — empty map
 TEST_CASE("lookupBySymbol returns nullptr on empty map") {
     TradeManager manager;
-
     CHECK(manager.lookupBySymbol("AAPL") == nullptr);
 }
-
-// Delete — existing symbol
 TEST_CASE("deleteFromMap removes existing trade") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
     BaseTrade* s1 = new SellTrade("TSLA", 5, High, 10.0, 200.0);
-
     manager.insertIntoMap(b1);
     manager.insertIntoMap(s1);
-
     bool result = manager.deleteFromMap("AAPL");
-
-    CHECK(result == true);              // deletion should succeed
-    CHECK(manager.getMapSize() == 1);   // size should decrease
-    CHECK(manager.lookupBySymbol("AAPL") == nullptr);  // should no longer be found
+    CHECK(result == true);
+    CHECK(manager.getMapSize() == 1);
+    CHECK(manager.lookupBySymbol("AAPL") == nullptr);
 }
-
-// Delete — non-existent symbol
 TEST_CASE("deleteFromMap returns false for non-existent symbol") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
-
     manager.insertIntoMap(b1);
-
     bool result = manager.deleteFromMap("MSFT");
-
-    CHECK(result == false);             // deletion should fail
-    CHECK(manager.getMapSize() == 1);   // size should not change
+    CHECK(result == false);
+    CHECK(manager.getMapSize() == 1);
 }
-
-// Delete — empty map
 TEST_CASE("deleteFromMap returns false on empty map") {
     TradeManager manager;
-
     bool result = manager.deleteFromMap("AAPL");
-
-    CHECK(result == false);             // nothing to delete
-    CHECK(manager.getMapSize() == 0);   // size stays 0
-}
-
-// Iterate — empty map
-TEST_CASE("printMap handles empty map gracefully") {
-    TradeManager manager;
-
-    manager.printMap();  // should not crash
-
+    CHECK(result == false);
     CHECK(manager.getMapSize() == 0);
 }
-
-// Iterate — multiple trades (should be sorted by symbol)
+TEST_CASE("printMap handles empty map gracefully") {
+    TradeManager manager;
+    manager.printMap();
+    CHECK(manager.getMapSize() == 0);
+}
 TEST_CASE("printMap displays trades sorted by symbol") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("TSLA", 10, Low, 2.0, 100.0);
     BaseTrade* s1 = new SellTrade("AAPL", 5, High, 10.0, 200.0);
     BaseTrade* b2 = new BuyTrade("GOOG", 3, Medium, 1.0, 50.0);
-
     manager.insertIntoMap(b1);
     manager.insertIntoMap(s1);
     manager.insertIntoMap(b2);
-
-    manager.printMap();  // should display in alphabetical order: AAPL, GOOG, TSLA
-
+    manager.printMap();
     CHECK(manager.getMapSize() == 3);
 }
-
-// Performance comparison — map vs sequential search
 TEST_CASE("lookupBySymbol is faster than sequentialSearch") {
     TradeManager manager;
-
-    // Add many trades to make difference more apparent
     for (int i = 0; i < 100; i++) {
         BaseTrade* trade = new BuyTrade("SYM" + std::to_string(i), 10, Low, 1.0, 100.0);
         manager.addTrade(trade);
         manager.insertIntoMap(trade);
     }
-
-    // Both should find the trade
     CHECK(manager.lookupBySymbol("SYM50") != nullptr);
     CHECK(manager.sequentialSearch("SYM50") != -1);
+}
+// ==========================================================
+// M) ASSIGNMENT 14 REST API TESTS
+// ==========================================================
+// Tests that StockApiClient accumulates response correctly
+TEST_CASE("StockApiClient StartOfData clears response") {
+    StockApiClient client;
+    // simulate data arriving then clearing
+    client.Data("some data", 9);
+    client.StartOfData();  // should clear
+    CHECK(client.GetResponse() == "");
+}
 
-    // Map lookup is O(log n), sequential is O(n)
-    // For large datasets, map would be significantly faster
+TEST_CASE("StockApiClient Data accumulates chunks") {
+    StockApiClient client;
+    client.StartOfData();
+    // pass as const char* to match the actual signature
+    client.Data("chunk1", 6);
+    client.Data("chunk2", 6);
+    client.Data("chunk3", 6);
+    client.EndOfData();
+    CHECK(client.GetResponse() == "chunk1chunk2chunk3");
+}
+
+TEST_CASE("StockApiClient GetResponse returns empty before data") {
+    StockApiClient client;
+    CHECK(client.GetResponse() == "");
+}
+
+TEST_CASE("StockApiClient EndOfData does not crash") {
+    StockApiClient client;
+    client.StartOfData();
+    client.Data("test data", 9);
+    client.EndOfData();
+    CHECK(client.GetResponse() == "test data");
+}
+
+// Tests that JSON parsing handles valid currency response correctly
+TEST_CASE("JSON parsing handles valid currency array") {
+    // simulate what the API would return
+    // WHY no special characters? Because the euro symbol causes
+    // encoding issues in some compilers — using plain ASCII avoids this
+    string fakeResponse = "{\"count\": 2, \"currencies\": [{\"code\": \"USD\", \"name\": \"US Dollar\", \"symbol\": \"$\", \"rate_usd\": 1.0}, {\"code\": \"EUR\", \"name\": \"Euro\", \"symbol\": \"EUR\", \"rate_usd\": 0.92}]}";
+
+    bool parseSucceeded = false;
+    try {
+        nlohmann::json jsonData = nlohmann::json::parse(fakeResponse);
+        parseSucceeded = jsonData.contains("currencies") &&
+            jsonData["currencies"].is_array();
+    }
+    catch (const nlohmann::json::exception&) {
+        parseSucceeded = false;
+    }
+    CHECK(parseSucceeded == true);
+}
+
+// Tests that JSON parsing handles missing currencies key
+TEST_CASE("JSON parsing handles missing currencies key") {
+    string missingKey = R"({"count": 0})";
+
+    bool parseSucceeded = false;
+    try {
+        nlohmann::json jsonData = nlohmann::json::parse(missingKey);
+        parseSucceeded = jsonData.contains("currencies");
+    }
+    catch (const nlohmann::json::exception&) {
+        parseSucceeded = false;
+    }
+    CHECK(parseSucceeded == false);
+}
+
+// Tests that POST JSON body is built correctly
+TEST_CASE("POST JSON body builds correctly") {
+    nlohmann::json requestBody;
+    requestBody["code"] = "PLN";
+    requestBody["name"] = "Polish Zloty";
+    requestBody["symbol"] = "zl";
+    requestBody["rate_usd"] = 3.94;
+
+    string bodyStr = requestBody.dump();
+
+    // verify the JSON string contains expected fields
+    CHECK(bodyStr.find("PLN") != string::npos);
+    CHECK(bodyStr.find("Polish Zloty") != string::npos);
+    CHECK(bodyStr.find("rate_usd") != string::npos);
+}
+
+// Tests that POST response parsing handles success correctly
+TEST_CASE("POST response parsing handles success message") {
+    string successResponse = R"({
+        "message": "currency added successfully",
+        "currency": {"code": "PLN", "name": "Polish Zloty", "symbol": "zl", "rate_usd": 3.94}
+    })";
+
+    bool parseSucceeded = false;
+    string message = "";
+    try {
+        nlohmann::json jsonResponse = nlohmann::json::parse(successResponse);
+        message = jsonResponse.value("message", "");
+        parseSucceeded = !message.empty();
+    }
+    catch (const nlohmann::json::exception&) {
+        parseSucceeded = false;
+    }
+    CHECK(parseSucceeded == true);
+    CHECK(message == "currency added successfully");
+}
+
+// Tests that POST response parsing handles error response
+TEST_CASE("POST response parsing handles error response") {
+    string errorResponse = R"({"error": "Missing required fields"})";
+
+    bool hasError = false;
+    try {
+        nlohmann::json jsonResponse = nlohmann::json::parse(errorResponse);
+        hasError = jsonResponse.contains("error");
+    }
+    catch (const nlohmann::json::exception&) {
+        hasError = false;
+    }
+    CHECK(hasError == true);
 }
 
 #endif
