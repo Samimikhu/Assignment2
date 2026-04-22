@@ -34,7 +34,7 @@ public:
 
     // ===== ASSIGNMENT 14 ADDITION =====
     // Called repeatedly as chunks of response data arrive
-    // WHY const char* and size? Because HttpClient passes raw bytes —
+    // WHY const char* and size? Because HttpClient passes raw bytes 
     // we append each chunk to build the complete response string
     // WHY override? Because HTTP responses arrive in pieces and we need
     // to collect all of them before we can parse the JSON
