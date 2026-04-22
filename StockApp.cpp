@@ -1,3 +1,8 @@
+// ===== ASSIGNMENT 14 ADDITION =====
+// Prevents 'byte' ambiguity between windows.h and std::byte in C++17
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#define _HAS_STD_BYTE 0
 /*
 Implements menu system and trade input.
 
