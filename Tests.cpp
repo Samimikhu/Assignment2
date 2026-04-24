@@ -431,7 +431,7 @@ TEST_CASE("insertIntoMap adds multiple trades") {
     manager.insertIntoMap(b2);
     CHECK(manager.getMapSize() == 3);
 }
-TEST_CASE("insertIntoMap replaces trade with duplicate symbol") {
+TEST_CASE("insertIntoMap replaces trade with duplicates symbol") {
     TradeManager manager;
     BaseTrade* b1 = new BuyTrade("AAPL", 10, Low, 2.0, 100.0);
     BaseTrade* b2 = new BuyTrade("AAPL", 20, High, 3.0, 150.0);
