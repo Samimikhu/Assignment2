@@ -637,4 +637,25 @@ TEST_CASE("POST response parsing handles error response") {
     CHECK(hasError == true);
 }
 
+// Validate JSON Parsing
+TEST_CASE("API JSON parsing for currency works") {
+    std::string sample = R"({
+        "count": 1,
+        "currencies": [
+            {
+                "code": "USD",
+                "name": "US Dollar",
+                "symbol": "$",
+                "rate_usd": 1.0
+            }
+        ]
+    })";
+
+    auto data = nlohmann::json::parse(sample);
+
+    CHECK(data["currencies"].is_array());
+    CHECK(data["currencies"][0]["code"] == "USD");
+    CHECK(data["currencies"][0]["rate_usd"] == doctest::Approx(1.0));
+}
+
 #endif
